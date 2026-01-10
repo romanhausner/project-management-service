@@ -1,11 +1,16 @@
 package org.rhausner.projectmanagement.projectmanagementservice.dto;
 
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+
 import java.time.LocalDate;
 
 public class ProjectCreateDto {
 
+    @NotBlank
     private String name;
     private String description;
+    @NotNull
     private LocalDate startDate;
     private LocalDate endDate;
 

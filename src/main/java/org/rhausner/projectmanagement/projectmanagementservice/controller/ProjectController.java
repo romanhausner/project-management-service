@@ -1,10 +1,12 @@
 package org.rhausner.projectmanagement.projectmanagementservice.controller;
 
+import jakarta.validation.Valid;
 import org.rhausner.projectmanagement.projectmanagementservice.dto.*;
 import org.rhausner.projectmanagement.projectmanagementservice.model.Project;
 import org.rhausner.projectmanagement.projectmanagementservice.service.ProjectService;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -33,7 +35,7 @@ public class ProjectController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public ProjectGetDto createProject(@RequestBody ProjectCreateDto projectDto) {
+    public ProjectGetDto createProject(@Valid @RequestBody ProjectCreateDto projectDto) {
         Project toSave = projectMapper.fromCreateDto(projectDto);
         Project saved = projectService.createProject(toSave);
         return projectMapper.toGetDto(saved);
@@ -45,10 +47,10 @@ public class ProjectController {
     }
 
     @PutMapping("/{id}")
-    public ProjectGetDto update(@PathVariable Integer id, @RequestBody ProjectUpdateDto projectDto) {
+    public ProjectGetDto update(@PathVariable Integer id, @Valid @RequestBody ProjectUpdateDto projectDto) {
         Project existing = projectService.getProjectById(id);
         if (existing == null) {
-            return null;
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Project not found");
         }
         projectMapper.updateFromUpdateDto(existing, projectDto);
         Project updated = projectService.updateProject(id, existing);
