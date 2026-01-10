@@ -26,4 +26,13 @@ public class ProjectService {
     public Project getProjectById(Integer id) {
         return projectRepository.findById(id).orElse(null);
     }
+
+    public Project updateProject(Integer id, Project project) {
+        project.setId(id);
+        return projectRepository.save(project);
+    }
+
+    public void deleteProjectById(Integer id) {
+        projectRepository.deleteById(id);
+    }
 }
