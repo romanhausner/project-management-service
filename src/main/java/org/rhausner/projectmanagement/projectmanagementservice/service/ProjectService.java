@@ -61,27 +61,23 @@ public class ProjectService {
         if (project == null) {
             throw new ProjectNotFoundException(id);
         }
-        if (cmd.getName().isEmpty() || cmd.getName().get().isBlank()) {
-            throw new BadRequestException("name must not be null or blank");
+        if (cmd.getName().isPresent()) {
+            if (cmd.getName().get().isBlank()) {
+                throw new BadRequestException("name must not be blank");
+            }
+            project.setName(cmd.getName().get());
         }
-        project.setName(cmd.getName().get());
 
-        cmd.getDescription().ifPresentOrElse(
-                project::setDescription,
-                project::clearDescription
+        cmd.getDescription().ifPresent(
+                project::setDescription
         );
-        if (cmd.getStartDate().isEmpty()) {
-            throw new BadRequestException("start date must not be null or blank");
-        }
-        project.setStartDate(cmd.getStartDate().get());
-        cmd.getEndDate().ifPresentOrElse(
-                project::setEndDate,
-                project::clearEndDate
+        cmd.getStartDate().ifPresent(
+                project::setStartDate
         );
-        if (cmd.getProjectStatus().isEmpty()) {
-            throw new BadRequestException("project status must not be null");
-        }
-        project.setProjectStatus(cmd.getProjectStatus().get());
+        cmd.getEndDate().ifPresent(
+                project::setEndDate
+        );
+       cmd.getProjectStatus().ifPresent(project::setProjectStatus);
         return project;
     }
 }

@@ -1,5 +1,6 @@
 package org.rhausner.projectmanagement.projectmanagementservice.dto.command;
 
+import org.rhausner.projectmanagement.projectmanagementservice.exception.BadRequestException;
 import org.rhausner.projectmanagement.projectmanagementservice.model.ProjectStatus;
 import tools.jackson.databind.JsonNode;
 
@@ -8,19 +9,20 @@ import java.util.Optional;
 
 public class ProjectPatchCommand {
 
-    private Optional<String> name;
-    private Optional<String> description;
-    private Optional<LocalDate> startDate;
-    private Optional<LocalDate> endDate;
-    private Optional<ProjectStatus> projectStatus;
+    private Optional<String> name = Optional.empty();
+    private Optional<String> description = Optional.empty();
+    private Optional<LocalDate> startDate = Optional.empty();
+    private Optional<LocalDate> endDate = Optional.empty();
+    private Optional<ProjectStatus> projectStatus = Optional.empty();
 
     public static ProjectPatchCommand from(JsonNode node) {
         ProjectPatchCommand cmd = new ProjectPatchCommand();
 
         if (node.has("name")) {
-            cmd.name = node.get("name").isNull()
-                    ? Optional.empty()
-                    : Optional.of(node.get("name").asString());
+            if (node.get("name").isNull()) {
+                throw new BadRequestException("name must not be null");
+            }
+            cmd.name = Optional.of(node.get("name").asString());
         }
 
         if (node.has("description")) {
@@ -30,9 +32,10 @@ public class ProjectPatchCommand {
         }
 
         if (node.has("startDate")) {
-            cmd.startDate = node.get("startDate").isNull()
-                    ? Optional.empty()
-                    : Optional.of(node.get("startDate").asString()).map(LocalDate::parse);
+            if (node.get("startDate").isNull()) {
+                throw new BadRequestException("startDate must not be null");
+            }
+            cmd.startDate = Optional.of(node.get("startDate").asString()).map(LocalDate::parse);
         }
 
         if (node.has("endDate")) {
