@@ -34,21 +34,20 @@ public class ProjectMapper {
         return project;
     }
 
-    public void updateFromUpdateDto(Project project, ProjectUpdateDto dto) {
-        if (dto == null || project == null) return;
-        project.setName(dto.getName());
-        project.setDescription(dto.getDescription());
-        project.setStartDate(dto.getStartDate());
-        project.setEndDate(dto.getEndDate());
-        if (dto.getProjectStatus() != null) {
-            project.setProjectStatus(dto.getProjectStatus());
-        }
-    }
-
     public Project fromGetDto(ProjectGetDto dto) {
         if (dto == null) return null;
         Project project = new Project();
         project.setId(dto.getId());
+        project.setName(dto.getName());
+        project.setDescription(dto.getDescription());
+        project.setStartDate(dto.getStartDate());
+        project.setEndDate(dto.getEndDate());
+        project.setProjectStatus(dto.getProjectStatus());
+        return project;
+    }
+
+    public Project fromUpdateDto(ProjectUpdateDto dto) {
+        Project project = new Project();
         project.setName(dto.getName());
         project.setDescription(dto.getDescription());
         project.setStartDate(dto.getStartDate());

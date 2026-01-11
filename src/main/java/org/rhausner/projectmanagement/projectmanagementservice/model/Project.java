@@ -70,6 +70,10 @@ public class Project {
         this.description = description;
     }
 
+    public void clearDescription(){
+        this.description = null;
+    }
+
     public LocalDate getStartDate() {
         return startDate;
     }
@@ -84,6 +88,10 @@ public class Project {
 
     public void setEndDate(LocalDate endDate) {
         this.endDate = endDate;
+    }
+
+    public void clearEndDate() {
+        this.endDate = null;
     }
 
     public ProjectStatus getProjectStatus() {

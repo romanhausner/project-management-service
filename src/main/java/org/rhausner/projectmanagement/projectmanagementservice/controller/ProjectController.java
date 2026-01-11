@@ -3,15 +3,18 @@ package org.rhausner.projectmanagement.projectmanagementservice.controller;
 import jakarta.validation.Valid;
 import org.rhausner.projectmanagement.projectmanagementservice.dto.*;
 import org.rhausner.projectmanagement.projectmanagementservice.model.Project;
+import org.rhausner.projectmanagement.projectmanagementservice.model.ProjectPatchCommand;
 import org.rhausner.projectmanagement.projectmanagementservice.service.ProjectService;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
+import tools.jackson.databind.JsonNode;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
 /**
- * Controller for {@link Project}.
+ * REST controller for managing projects.
+ * Provides CRUD operations for {@link Project}.
  */
 @RestController
 @RequestMapping("api/v1/projects")
@@ -45,14 +48,17 @@ public class ProjectController {
         return projectMapper.toGetDto(projectService.getProjectById(id));
     }
 
+    /**
+     * Updates existing project with given id.
+     *
+     * @param id id of project to update
+     * @param projectDto project to update
+     * @return updated project as dto
+     */
     @PutMapping("/{id}")
     public ProjectGetDto update(@PathVariable Integer id, @Valid @RequestBody ProjectUpdateDto projectDto) {
-        Project existing = projectService.getProjectById(id);
-        if (existing == null) {
-            return null;
-        }
-        projectMapper.updateFromUpdateDto(existing, projectDto);
-        Project updated = projectService.updateProject(id, existing);
+        Project project = projectMapper.fromUpdateDto(projectDto);
+        Project updated = projectService.updateProject(id, project);
         return projectMapper.toGetDto(updated);
     }
 
@@ -60,5 +66,35 @@ public class ProjectController {
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteProjectById(@PathVariable Integer id) {
         projectService.deleteProjectById(id);
+    }
+
+//    @PatchMapping("/{id}")
+//    public ProjectGetDto patchProject(
+//            @PathVariable Integer id,
+//            @RequestBody JsonNode patch) {
+//
+//        Project project = projectService.getProjectById(id);
+//
+//        if (patch.has("description")) {
+//            if (patch.get("description").isNull()) {
+//                project.setDescription(null);
+//            } else {
+//                project.setDescription(patch.get("description").asString());
+//            }
+//        }
+//
+//        projectService.updateProject(id, project);
+//        return projectMapper.toGetDto(project);
+//    }
+
+    @PatchMapping("/{id}")
+    public ProjectGetDto patchProject(
+            @PathVariable Integer id,
+            @RequestBody JsonNode patch) {
+
+        ProjectPatchCommand command = ProjectPatchCommand.from(patch);
+        Project updated = projectService.patchProject(id, command);
+
+        return projectMapper.toGetDto(updated);
     }
 }

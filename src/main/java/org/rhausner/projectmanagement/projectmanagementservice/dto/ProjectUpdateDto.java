@@ -14,6 +14,7 @@ public class ProjectUpdateDto {
     @NotNull
     private LocalDate startDate;
     private LocalDate endDate;
+    @NotNull
     private ProjectStatus projectStatus;
 
     public ProjectUpdateDto() {
