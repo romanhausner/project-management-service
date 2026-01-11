@@ -31,13 +31,6 @@ public class ProjectService {
         return projectRepository.findById(id).orElse(null);
     }
 
-//    public Project updateProject(Integer id, Project project) {
-//        projectRepository.findById(id)
-//                .orElseThrow(() -> new ProjectNotFoundException(id));
-//        project.setId(id);
-//        return projectRepository.save(project);
-//    }
-
     @Transactional
     public Project updateProject(Integer id, Project update) {
         Project existing = projectRepository.findById(id)

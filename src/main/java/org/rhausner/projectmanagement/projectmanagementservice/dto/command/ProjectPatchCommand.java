@@ -5,6 +5,7 @@ import org.rhausner.projectmanagement.projectmanagementservice.model.ProjectStat
 import tools.jackson.databind.JsonNode;
 
 import java.time.LocalDate;
+import java.time.format.DateTimeParseException;
 import java.util.Optional;
 
 public class ProjectPatchCommand {
@@ -35,13 +36,21 @@ public class ProjectPatchCommand {
             if (node.get("startDate").isNull()) {
                 throw new BadRequestException("startDate must not be null");
             }
-            cmd.startDate = Optional.of(node.get("startDate").asString()).map(LocalDate::parse);
+            try {
+                cmd.startDate = Optional.of(node.get("startDate").asString()).map(LocalDate::parse);
+            } catch (DateTimeParseException e) {
+                throw new BadRequestException("startDate must be a valid date in ISO format (yyyy-MM-dd)");
+            }
         }
 
-        if (node.has("endDate")) {
-            cmd.endDate = node.get("endDate").isNull()
-                    ? Optional.empty()
-                    : Optional.of(node.get("endDate").asString()).map(LocalDate::parse);
+        try {
+            if (node.has("endDate")) {
+                cmd.endDate = node.get("endDate").isNull()
+                        ? Optional.empty()
+                        : Optional.of(node.get("endDate").asString()).map(LocalDate::parse);
+            }
+        } catch (DateTimeParseException e) {
+            throw new BadRequestException("endDate must be a valid date in ISO format (yyyy-MM-dd)");
         }
 
         if (node.has("projectStatus")) {
