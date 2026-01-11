@@ -1,6 +1,7 @@
 package org.rhausner.projectmanagement.projectmanagementservice.dto;
 
 import org.rhausner.projectmanagement.projectmanagementservice.model.Project;
+import org.rhausner.projectmanagement.projectmanagementservice.model.ProjectStatus;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -13,7 +14,8 @@ public class ProjectMapper {
                 project.getName(),
                 project.getDescription(),
                 project.getStartDate(),
-                project.getEndDate()
+                project.getEndDate(),
+                project.getProjectStatus()
         );
     }
 
@@ -24,6 +26,11 @@ public class ProjectMapper {
         project.setDescription(dto.getDescription());
         project.setStartDate(dto.getStartDate());
         project.setEndDate(dto.getEndDate());
+        if (dto.getProjectStatus() != null) {
+            project.setProjectStatus(dto.getProjectStatus());
+        } else {
+            project.setProjectStatus(ProjectStatus.PLANNED);
+        }
         return project;
     }
 
@@ -33,6 +40,9 @@ public class ProjectMapper {
         project.setDescription(dto.getDescription());
         project.setStartDate(dto.getStartDate());
         project.setEndDate(dto.getEndDate());
+        if (dto.getProjectStatus() != null) {
+            project.setProjectStatus(dto.getProjectStatus());
+        }
     }
 
     public Project fromGetDto(ProjectGetDto dto) {
@@ -43,6 +53,7 @@ public class ProjectMapper {
         project.setDescription(dto.getDescription());
         project.setStartDate(dto.getStartDate());
         project.setEndDate(dto.getEndDate());
+        project.setProjectStatus(dto.getProjectStatus());
         return project;
     }
 }

@@ -2,6 +2,7 @@ package org.rhausner.projectmanagement.projectmanagementservice.dto;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import org.rhausner.projectmanagement.projectmanagementservice.model.ProjectStatus;
 
 import java.time.LocalDate;
 
@@ -13,15 +14,17 @@ public class ProjectUpdateDto {
     @NotNull
     private LocalDate startDate;
     private LocalDate endDate;
+    private ProjectStatus projectStatus;
 
     public ProjectUpdateDto() {
     }
 
-    public ProjectUpdateDto(String name, String description, LocalDate startDate, LocalDate endDate) {
+    public ProjectUpdateDto(String name, String description, LocalDate startDate, LocalDate endDate, ProjectStatus projectStatus) {
         this.name = name;
         this.description = description;
         this.startDate = startDate;
         this.endDate = endDate;
+        this.projectStatus = projectStatus;
     }
 
     public String getName() {
@@ -55,5 +58,12 @@ public class ProjectUpdateDto {
     public void setEndDate(LocalDate endDate) {
         this.endDate = endDate;
     }
-}
 
+    public ProjectStatus getProjectStatus() {
+        return projectStatus;
+    }
+
+    public void setProjectStatus(ProjectStatus projectStatus) {
+        this.projectStatus = projectStatus;
+    }
+}

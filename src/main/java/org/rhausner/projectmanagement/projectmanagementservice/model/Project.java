@@ -1,9 +1,6 @@
 package org.rhausner.projectmanagement.projectmanagementservice.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 
 import java.time.LocalDate;
 import java.util.Objects;
@@ -21,6 +18,9 @@ public class Project {
     private String description;
     private LocalDate startDate;
     private LocalDate endDate;
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private ProjectStatus projectStatus;
 
     /**
      * No-args Constructor.
@@ -43,6 +43,7 @@ public class Project {
         this.description = description;
         this.startDate = startDate;
         this.endDate = endDate;
+        this.projectStatus = ProjectStatus.PLANNED;
     }
 
     public Integer getId() {
@@ -83,6 +84,14 @@ public class Project {
 
     public void setEndDate(LocalDate endDate) {
         this.endDate = endDate;
+    }
+
+    public ProjectStatus getProjectStatus() {
+        return projectStatus;
+    }
+
+    public void setProjectStatus(ProjectStatus projectStatus) {
+        this.projectStatus = projectStatus;
     }
 
     @Override

@@ -6,7 +6,6 @@ import org.rhausner.projectmanagement.projectmanagementservice.model.Project;
 import org.rhausner.projectmanagement.projectmanagementservice.service.ProjectService;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -50,7 +49,7 @@ public class ProjectController {
     public ProjectGetDto update(@PathVariable Integer id, @Valid @RequestBody ProjectUpdateDto projectDto) {
         Project existing = projectService.getProjectById(id);
         if (existing == null) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Project not found");
+            return null;
         }
         projectMapper.updateFromUpdateDto(existing, projectDto);
         Project updated = projectService.updateProject(id, existing);
