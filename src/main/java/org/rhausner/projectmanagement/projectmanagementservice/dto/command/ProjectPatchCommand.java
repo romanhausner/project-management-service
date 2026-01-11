@@ -1,5 +1,6 @@
-package org.rhausner.projectmanagement.projectmanagementservice.model;
+package org.rhausner.projectmanagement.projectmanagementservice.dto.command;
 
+import org.rhausner.projectmanagement.projectmanagementservice.model.ProjectStatus;
 import tools.jackson.databind.JsonNode;
 
 import java.time.LocalDate;

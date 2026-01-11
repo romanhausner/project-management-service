@@ -2,7 +2,7 @@ package org.rhausner.projectmanagement.projectmanagementservice.service;
 
 import org.rhausner.projectmanagement.projectmanagementservice.exception.BadRequestException;
 import org.rhausner.projectmanagement.projectmanagementservice.exception.ProjectNotFoundException;
-import org.rhausner.projectmanagement.projectmanagementservice.model.ProjectPatchCommand;
+import org.rhausner.projectmanagement.projectmanagementservice.dto.command.ProjectPatchCommand;
 import org.rhausner.projectmanagement.projectmanagementservice.repository.ProjectRepository;
 import org.rhausner.projectmanagement.projectmanagementservice.model.Project;
 import org.springframework.stereotype.Service;

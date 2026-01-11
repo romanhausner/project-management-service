@@ -3,7 +3,7 @@ package org.rhausner.projectmanagement.projectmanagementservice.controller;
 import jakarta.validation.Valid;
 import org.rhausner.projectmanagement.projectmanagementservice.dto.*;
 import org.rhausner.projectmanagement.projectmanagementservice.model.Project;
-import org.rhausner.projectmanagement.projectmanagementservice.model.ProjectPatchCommand;
+import org.rhausner.projectmanagement.projectmanagementservice.dto.command.ProjectPatchCommand;
 import org.rhausner.projectmanagement.projectmanagementservice.service.ProjectService;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
