@@ -12,8 +12,10 @@ public class ProjectPatchCommand {
 
     private Optional<String> name = Optional.empty();
     private Optional<String> description = Optional.empty();
+    private boolean descriptionPresent = false;
     private Optional<LocalDate> startDate = Optional.empty();
     private Optional<LocalDate> endDate = Optional.empty();
+    private boolean endDatePresent = false;
     private Optional<ProjectStatus> projectStatus = Optional.empty();
 
     public static ProjectPatchCommand from(JsonNode node) {
@@ -27,6 +29,7 @@ public class ProjectPatchCommand {
         }
 
         if (node.has("description")) {
+            cmd.descriptionPresent = true;
             cmd.description = node.get("description").isNull()
                     ? Optional.empty()
                     : Optional.of(node.get("description").asString());
@@ -43,15 +46,17 @@ public class ProjectPatchCommand {
             }
         }
 
-        try {
-            if (node.has("endDate")) {
+        if (node.has("endDate")) {
+            cmd.endDatePresent = true;
+            try {
                 cmd.endDate = node.get("endDate").isNull()
                         ? Optional.empty()
                         : Optional.of(node.get("endDate").asString()).map(LocalDate::parse);
+            } catch (DateTimeParseException e) {
+                throw new BadRequestException("endDate must be a valid date in ISO format (yyyy-MM-dd)");
             }
-        } catch (DateTimeParseException e) {
-            throw new BadRequestException("endDate must be a valid date in ISO format (yyyy-MM-dd)");
         }
+
 
         if (node.has("projectStatus")) {
             cmd.projectStatus = node.get("projectStatus").isNull()
@@ -80,5 +85,13 @@ public class ProjectPatchCommand {
 
     public Optional<LocalDate> getStartDate() {
         return this.startDate;
+    }
+
+    public boolean isDescriptionPresent() {
+        return descriptionPresent;
+    }
+
+    public boolean isEndDatePresent() {
+        return endDatePresent;
     }
 }

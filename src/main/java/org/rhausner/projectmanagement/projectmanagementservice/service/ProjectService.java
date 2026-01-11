@@ -28,14 +28,13 @@ public class ProjectService {
     }
 
     public Project getProjectById(Integer id) {
-        return projectRepository.findById(id).orElse(null);
+        return projectRepository.findById(id)
+                .orElseThrow(() -> new ProjectNotFoundException(id));
     }
 
     @Transactional
     public Project updateProject(Integer id, Project update) {
-        Project existing = projectRepository.findById(id)
-                .orElseThrow(() -> new ProjectNotFoundException(id));
-
+        Project existing = getProjectById(id);
         existing.setName(update.getName());
         existing.setDescription(update.getDescription());
         existing.setStartDate(update.getStartDate());
@@ -49,28 +48,22 @@ public class ProjectService {
     }
 
     @Transactional
-    public Project patchProject(Integer id, ProjectPatchCommand cmd){
+    public Project patchProject(Integer id, ProjectPatchCommand cmd) {
         Project project = getProjectById(id);
-        if (project == null) {
-            throw new ProjectNotFoundException(id);
-        }
-        if (cmd.getName().isPresent()) {
-            if (cmd.getName().get().isBlank()) {
+        cmd.getName().ifPresent(name -> {
+            if (name.isBlank()) {
                 throw new BadRequestException("name must not be blank");
             }
-            project.setName(cmd.getName().get());
+            project.setName(name);
+        });
+        if (cmd.isDescriptionPresent()) {
+            cmd.getDescription().ifPresentOrElse(project::setDescription, project::clearDescription);
         }
-
-        cmd.getDescription().ifPresent(
-                project::setDescription
-        );
-        cmd.getStartDate().ifPresent(
-                project::setStartDate
-        );
-        cmd.getEndDate().ifPresent(
-                project::setEndDate
-        );
-       cmd.getProjectStatus().ifPresent(project::setProjectStatus);
+        cmd.getStartDate().ifPresent(project::setStartDate);
+        if (cmd.isEndDatePresent()) {
+            cmd.getEndDate().ifPresentOrElse(project::setEndDate, project::clearEndDate);
+        }
+        cmd.getProjectStatus().ifPresent(project::setProjectStatus);
         return project;
     }
 }
