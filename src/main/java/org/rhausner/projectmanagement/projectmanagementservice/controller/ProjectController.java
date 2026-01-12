@@ -17,7 +17,7 @@ import java.util.stream.Collectors;
  * Provides CRUD operations for {@link Project}.
  */
 @RestController
-@RequestMapping("api/v1/projects")
+@RequestMapping("/api/v1/projects")
 public class ProjectController {
 
     private final ProjectService projectService;

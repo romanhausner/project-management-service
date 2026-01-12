@@ -8,7 +8,6 @@ import org.springframework.web.bind.annotation.RestController;
  * Spring Boot application entry point for the Project Management Service.
  */
 @SpringBootApplication
-@RestController
 public class ProjectManagementServiceApplication {
 
     /**
