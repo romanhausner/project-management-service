@@ -1,5 +1,6 @@
 package org.rhausner.projectmanagement.projectmanagementservice.controller;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import jakarta.validation.Valid;
 import org.rhausner.projectmanagement.projectmanagementservice.dto.*;
 import org.rhausner.projectmanagement.projectmanagementservice.model.Project;
@@ -7,7 +8,6 @@ import org.rhausner.projectmanagement.projectmanagementservice.dto.command.Proje
 import org.rhausner.projectmanagement.projectmanagementservice.service.ProjectService;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
-import tools.jackson.databind.JsonNode;
 
 import java.util.List;
 import java.util.stream.Collectors;

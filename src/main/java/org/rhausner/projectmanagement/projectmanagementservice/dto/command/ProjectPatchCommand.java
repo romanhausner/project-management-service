@@ -1,8 +1,9 @@
 package org.rhausner.projectmanagement.projectmanagementservice.dto.command;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import org.rhausner.projectmanagement.projectmanagementservice.exception.BadRequestException;
 import org.rhausner.projectmanagement.projectmanagementservice.model.ProjectStatus;
-import tools.jackson.databind.JsonNode;
+
 
 import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
@@ -48,7 +49,7 @@ public class ProjectPatchCommand {
             if (node.get("name").isNull()) {
                 throw new BadRequestException("name must not be null");
             }
-            cmd.name = Optional.of(node.get("name").asString());
+            cmd.name = Optional.of(node.get("name").toString());
         }
 
         // DESCRIPTION: support explicit clearing via JSON null. Use descriptionPresent to distinguish
@@ -57,7 +58,7 @@ public class ProjectPatchCommand {
             cmd.descriptionPresent = true;
             cmd.description = node.get("description").isNull()
                     ? Optional.empty()
-                    : Optional.of(node.get("description").asString());
+                    : Optional.of(node.get("description").toString());
         }
 
         // START DATE: if provided it must be a valid ISO date and not null.
@@ -66,7 +67,7 @@ public class ProjectPatchCommand {
                 throw new BadRequestException("startDate must not be null");
             }
             try {
-                cmd.startDate = Optional.of(node.get("startDate").asString()).map(LocalDate::parse);
+                cmd.startDate = Optional.of(node.get("startDate").toString()).map(LocalDate::parse);
             } catch (DateTimeParseException e) {
                 throw new BadRequestException("startDate must be a valid date in ISO format (yyyy-MM-dd)");
             }
@@ -78,7 +79,7 @@ public class ProjectPatchCommand {
             try {
                 cmd.endDate = node.get("endDate").isNull()
                         ? Optional.empty()
-                        : Optional.of(node.get("endDate").asString()).map(LocalDate::parse);
+                        : Optional.of(node.get("endDate").toString()).map(LocalDate::parse);
             } catch (DateTimeParseException e) {
                 throw new BadRequestException("endDate must be a valid date in ISO format (yyyy-MM-dd)");
             }
@@ -89,7 +90,7 @@ public class ProjectPatchCommand {
         if (node.has("projectStatus")) {
             cmd.projectStatus = node.get("projectStatus").isNull()
                     ? Optional.empty()
-                    : Optional.of(ProjectStatus.fromValue(node.get("projectStatus").asString()));
+                    : Optional.of(ProjectStatus.fromValue(node.get("projectStatus").toString()));
         }
 
         return cmd;
