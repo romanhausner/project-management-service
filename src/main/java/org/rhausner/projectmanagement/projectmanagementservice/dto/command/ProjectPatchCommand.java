@@ -49,7 +49,7 @@ public class ProjectPatchCommand {
             if (node.get("name").isNull()) {
                 throw new BadRequestException("name must not be null");
             }
-            cmd.name = Optional.of(node.get("name").toString());
+            cmd.name = Optional.of(node.get("name").asText());
         }
 
         // DESCRIPTION: support explicit clearing via JSON null. Use descriptionPresent to distinguish
@@ -58,7 +58,7 @@ public class ProjectPatchCommand {
             cmd.descriptionPresent = true;
             cmd.description = node.get("description").isNull()
                     ? Optional.empty()
-                    : Optional.of(node.get("description").toString());
+                    : Optional.of(node.get("description").asText());
         }
 
         // START DATE: if provided it must be a valid ISO date and not null.
@@ -67,7 +67,7 @@ public class ProjectPatchCommand {
                 throw new BadRequestException("startDate must not be null");
             }
             try {
-                cmd.startDate = Optional.of(node.get("startDate").toString()).map(LocalDate::parse);
+                cmd.startDate = Optional.of(node.get("startDate").asText()).map(LocalDate::parse);
             } catch (DateTimeParseException e) {
                 throw new BadRequestException("startDate must be a valid date in ISO format (yyyy-MM-dd)");
             }
@@ -79,7 +79,7 @@ public class ProjectPatchCommand {
             try {
                 cmd.endDate = node.get("endDate").isNull()
                         ? Optional.empty()
-                        : Optional.of(node.get("endDate").toString()).map(LocalDate::parse);
+                        : Optional.of(node.get("endDate").asText()).map(LocalDate::parse);
             } catch (DateTimeParseException e) {
                 throw new BadRequestException("endDate must be a valid date in ISO format (yyyy-MM-dd)");
             }
@@ -90,7 +90,7 @@ public class ProjectPatchCommand {
         if (node.has("projectStatus")) {
             cmd.projectStatus = node.get("projectStatus").isNull()
                     ? Optional.empty()
-                    : Optional.of(ProjectStatus.fromValue(node.get("projectStatus").toString()));
+                    : Optional.of(ProjectStatus.fromValue(node.get("projectStatus").asText()));
         }
 
         return cmd;
