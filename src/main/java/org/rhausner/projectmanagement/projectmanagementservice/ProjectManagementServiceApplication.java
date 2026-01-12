@@ -4,10 +4,18 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.web.bind.annotation.RestController;
 
+/**
+ * Spring Boot application entry point for the Project Management Service.
+ */
 @SpringBootApplication
 @RestController
 public class ProjectManagementServiceApplication {
 
+    /**
+     * Application entry point used by the JVM to start the Spring Boot application.
+     *
+     * @param args standard command-line arguments forwarded to SpringApplication
+     */
     public static void main(String[] args) {
         SpringApplication.run(ProjectManagementServiceApplication.class, args);
     }

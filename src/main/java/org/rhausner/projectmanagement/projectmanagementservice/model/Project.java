@@ -6,7 +6,11 @@ import java.time.LocalDate;
 import java.util.Objects;
 
 /**
- * A Project.
+ * Domain entity representing a project in the system.
+ *
+ * This JPA entity stores the minimal attributes for a project such as name,
+ * description, start/end dates and the current {@link ProjectStatus}. It is
+ * persisted using JPA and mapped to a database table by the framework.
  */
 @Entity
 public class Project {
@@ -23,19 +27,20 @@ public class Project {
     private ProjectStatus projectStatus;
 
     /**
-     * No-args Constructor.
+     * No-args constructor required by JPA.
      */
     public Project() {
     }
 
     /**
-     * Constructor.
+     * Convenience constructor to create a project instance with its core fields.
+     * The {@code projectStatus} is initialised to {@link ProjectStatus#PLANNED} by default.
      *
-     * @param id          id
-     * @param name        name
-     * @param description description
-     * @param startDate   startDate
-     * @param endDate     endDate
+     * @param id          the project id (may be {@code null} for new entities)
+     * @param name        the project name
+     * @param description the project description
+     * @param startDate   the planned start date
+     * @param endDate     the planned end date
      */
     public Project(Integer id, String name, String description, LocalDate startDate, LocalDate endDate) {
         this.id = id;
@@ -70,6 +75,12 @@ public class Project {
         this.description = description;
     }
 
+    /**
+     * Clear the description (set it to {@code null}).
+     *
+     * This method is useful to explicitly remove an optional description value
+     * (for example when applying a PATCH that clears the field).
+     */
     public void clearDescription(){
         this.description = null;
     }
@@ -90,6 +101,12 @@ public class Project {
         this.endDate = endDate;
     }
 
+    /**
+     * Clear the end date (set it to {@code null}).
+     *
+     * Use this to explicitly remove an end date value when the business logic
+     * requires clearing the field.
+     */
     public void clearEndDate() {
         this.endDate = null;
     }
@@ -102,6 +119,11 @@ public class Project {
         this.projectStatus = projectStatus;
     }
 
+    /**
+     * Equality is based on id, name, description and dates. Note that the id may be
+     * {@code null} for transient instances; the equality logic mirrors the previous
+     * implementation and intentionally includes multiple fields for identity comparison.
+     */
     @Override
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) return false;
@@ -109,6 +131,9 @@ public class Project {
         return Objects.equals(id, project.id) && Objects.equals(name, project.name) && Objects.equals(description, project.description) && Objects.equals(startDate, project.startDate) && Objects.equals(endDate, project.endDate);
     }
 
+    /**
+     * Hash code implementation matching {@link #equals(Object)}.
+     */
     @Override
     public int hashCode() {
         return Objects.hash(id, name, description, startDate, endDate);

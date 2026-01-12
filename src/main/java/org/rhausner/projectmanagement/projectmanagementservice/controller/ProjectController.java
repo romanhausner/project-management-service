@@ -28,6 +28,10 @@ public class ProjectController {
         this.projectMapper = projectMapper;
     }
 
+    /**
+     * Return all projects.
+     * Response: JSON array of ProjectGetDto
+     */
     @GetMapping
     public List<ProjectGetDto> getProjects() {
         return projectService.getAllProjects().stream()
@@ -35,6 +39,11 @@ public class ProjectController {
                 .collect(Collectors.toList());
     }
 
+    /**
+     * Create a new project.
+     * Request: ProjectCreateDto (validated)
+     * Response: created ProjectGetDto with generated id
+     */
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public ProjectGetDto createProject(@Valid @RequestBody ProjectCreateDto projectDto) {
@@ -43,17 +52,20 @@ public class ProjectController {
         return projectMapper.toGetDto(saved);
     }
 
+    /**
+     * Return a single project by id.
+     * Response: ProjectGetDto, implicitly 404 if not found.
+     */
     @GetMapping("/{id}")
     public ProjectGetDto getProjectById(@PathVariable Integer id) {
         return projectMapper.toGetDto(projectService.getProjectById(id));
     }
 
     /**
-     * Updates existing project with given id.
-     *
-     * @param id id of project to update
-     * @param projectDto project to update
-     * @return updated project as dto
+     * Replace an existing project with the provided DTO.
+     * This is a full update (PUT semantics): caller provides the new state in ProjectUpdateDto.
+     * Request is validated; the mapper converts DTO -> entity, service persists and returns the updated entity.
+     * Implicitly 404 if the project to update does not exist.
      */
     @PutMapping("/{id}")
     public ProjectGetDto update(@PathVariable Integer id, @Valid @RequestBody ProjectUpdateDto projectDto) {
@@ -62,39 +74,26 @@ public class ProjectController {
         return projectMapper.toGetDto(updated);
     }
 
+    /**
+     * Delete a project by id.
+     * Response: 204 No Content on success.
+     */
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteProjectById(@PathVariable Integer id) {
         projectService.deleteProjectById(id);
     }
 
-//    @PatchMapping("/{id}")
-//    public ProjectGetDto patchProject(
-//            @PathVariable Integer id,
-//            @RequestBody JsonNode patch) {
-//
-//        Project project = projectService.getProjectById(id);
-//
-//        if (patch.has("description")) {
-//            if (patch.get("description").isNull()) {
-//                project.setDescription(null);
-//            } else {
-//                project.setDescription(patch.get("description").asString());
-//            }
-//        }
-//
-//        projectService.updateProject(id, project);
-//        return projectMapper.toGetDto(project);
-//    }
-
+    /**
+     * Apply a partial update (PATCH) to an existing project.
+     * The request body is read as a raw JsonNode to support flexible patch payloads.
+     * We convert the JsonNode into a ProjectPatchCommand which encodes presence/absence semantics
+     * and then delegate the patching logic to the service layer.
+     */
     @PatchMapping("/{id}")
-    public ProjectGetDto patchProject(
-            @PathVariable Integer id,
-            @RequestBody JsonNode patch) {
-
+    public ProjectGetDto patchProject(@PathVariable Integer id, @RequestBody JsonNode patch) {
         ProjectPatchCommand command = ProjectPatchCommand.from(patch);
         Project updated = projectService.patchProject(id, command);
-
         return projectMapper.toGetDto(updated);
     }
 }

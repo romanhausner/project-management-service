@@ -4,6 +4,9 @@ import org.rhausner.projectmanagement.projectmanagementservice.model.ProjectStat
 
 import java.time.LocalDate;
 
+/**
+ * DTO returned for GET requests representing a Project's public representation.
+ */
 public class ProjectGetDto {
 
     private Integer id;
@@ -13,9 +16,15 @@ public class ProjectGetDto {
     private LocalDate endDate;
     private ProjectStatus projectStatus;
 
+    /**
+     * No-args constructor required by Jackson and other frameworks.
+     */
     public ProjectGetDto() {
     }
 
+    /**
+     * All-args constructor for convenient manual instantiation in tests or internal code.
+     */
     public ProjectGetDto(Integer id, String name, String description, LocalDate startDate, LocalDate endDate, ProjectStatus projectStatus) {
         this.id = id;
         this.name = name;

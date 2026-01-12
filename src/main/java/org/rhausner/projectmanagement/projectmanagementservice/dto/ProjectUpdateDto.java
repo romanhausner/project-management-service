@@ -6,6 +6,11 @@ import org.rhausner.projectmanagement.projectmanagementservice.model.ProjectStat
 
 import java.time.LocalDate;
 
+/**
+ * Data Transfer Object used when updating an existing Project via PUT.
+ * This DTO represents the complete new state of a project (PUT semantics).
+ * Validation annotations enforce required fields for update operations.
+ */
 public class ProjectUpdateDto {
 
     @NotBlank
@@ -17,9 +22,15 @@ public class ProjectUpdateDto {
     @NotNull
     private ProjectStatus projectStatus;
 
+    /**
+     * No-args constructor required by Jackson and other frameworks.
+     */
     public ProjectUpdateDto() {
     }
 
+    /**
+     * All-args constructor for convenient manual instantiation in tests or internal code.
+     */
     public ProjectUpdateDto(String name, String description, LocalDate startDate, LocalDate endDate, ProjectStatus projectStatus) {
         this.name = name;
         this.description = description;
