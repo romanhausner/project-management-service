@@ -89,7 +89,7 @@ Create a `.env` file:
 
 ```env
 POSTGRES_USER=postgres
-POSTGRES_PASSWORD=postgres
+POSTGRES_PASSWORD=secret
 POSTGRES_DB=project_management
 ```
 
@@ -102,6 +102,16 @@ docker-compose up -d
 ---
 
 ### Application
+
+Set the environment variables before starting the application, for example via your IDE run configuration:
+
+```env
+DB_URL=jdbc:postgresql://localhost:5332/postgres
+DB_USER=postgres
+DB_PASSWORD=secret
+```
+
+Run the Spring Boot application:
 
 ```bash
 mvn spring-boot:run
