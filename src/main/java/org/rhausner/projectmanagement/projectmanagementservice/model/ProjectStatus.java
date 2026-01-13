@@ -3,8 +3,6 @@ package org.rhausner.projectmanagement.projectmanagementservice.model;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
 
-import java.util.Arrays;
-
 /**
  * Enumeration of possible project lifecycle states.
  *
@@ -13,7 +11,7 @@ import java.util.Arrays;
  * and correctly mapped to enum constants. The JSON representation produced by
  * {@link #toValue()} uses uppercase names.
  */
-public enum ProjectStatus {
+public enum ProjectStatus implements JsonEnum{
     PLANNED,
     IN_PROGRESS,
     COMPLETED,
@@ -35,11 +33,7 @@ public enum ProjectStatus {
      */
     @JsonCreator
     public static ProjectStatus fromValue(String value) {
-        return Arrays.stream(values())
-                .filter(v -> v.name().equalsIgnoreCase(value.replace("-", "_")))
-                .findFirst()
-                .orElseThrow(() ->
-                        new IllegalArgumentException("Unknown status: " + value));
+        return EnumJsonUtils.fromValue(ProjectStatus.class, value);
     }
 
     /**
@@ -52,6 +46,6 @@ public enum ProjectStatus {
      */
     @JsonValue
     public String toValue() {
-        return name().toUpperCase();
+        return JsonEnum.super.toValue();
     }
 }

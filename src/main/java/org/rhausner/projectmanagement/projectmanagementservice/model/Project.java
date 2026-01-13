@@ -20,6 +20,7 @@ public class Project {
     private Integer id;
     private String name;
     private String description;
+    @Column(nullable = false)
     private LocalDate startDate;
     private LocalDate endDate;
     @Enumerated(EnumType.STRING)
