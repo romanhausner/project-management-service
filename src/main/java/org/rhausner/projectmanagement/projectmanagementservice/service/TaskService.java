@@ -140,24 +140,21 @@ public class TaskService {
         });
 
         if (cmd.isDescriptionPresent()) {
-            cmd.getDescription().ifPresentOrElse(task::setDescription, () -> task.setDescription(null));
+            cmd.getDescription().ifPresentOrElse(task::setDescription, task::clearDescription);
         }
 
-        // due date presence/clear handled
-        cmd.getDueDate().ifPresent(date -> task.setDueDate(date));
-        if (cmd.isDueDatePresent() && cmd.getDueDate().isEmpty()) {
-            // explicit clear
-            task.setDueDate(null);
+        if (cmd.isDueDatePresent()) {
+            cmd.getDueDate().ifPresentOrElse(task::setDueDate, task::clearDueDate);
+        }
+
+        if (cmd.isAssigneePresent()) {
+            cmd.getAssignee().ifPresentOrElse(task::setAssignee, task::clearAssignee);
         }
 
         // Use domain methods for state transitions when status is provided
         cmd.getStatus().ifPresent(task::changeStatus);
 
         cmd.getPriority().ifPresent(task::setPriority);
-
-        if (cmd.isAssigneePresent()) {
-            cmd.getAssignee().ifPresentOrElse(task::setAssignee, () -> task.setAssignee(null));
-        }
 
         return task;
     }

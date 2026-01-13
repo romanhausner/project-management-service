@@ -1,5 +1,7 @@
 package org.rhausner.projectmanagement.projectmanagementservice.dto;
 
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import org.rhausner.projectmanagement.projectmanagementservice.model.TaskPriority;
 import org.rhausner.projectmanagement.projectmanagementservice.model.TaskStatus;
 
@@ -10,8 +12,10 @@ import java.time.LocalDate;
  */
 public class TaskUpdateDto {
 
+    @NotBlank
     private String title;
     private String description;
+    @NotNull
     private TaskStatus status;
     private TaskPriority priority;
     private LocalDate dueDate;

@@ -101,6 +101,10 @@ public class Task {
         this.description = description;
     }
 
+    public void clearDescription() {
+        this.description = null;
+    }
+
     public TaskStatus getStatus() {
         return status;
     }
@@ -125,12 +129,20 @@ public class Task {
         this.dueDate = dueDate;
     }
 
+    public void clearDueDate() {
+        this.dueDate = null;
+    }
+
     public String getAssignee() {
         return assignee;
     }
 
     public void setAssignee(String assignee) {
         this.assignee = assignee;
+    }
+
+    public  void clearAssignee() {
+        this.assignee = null;
     }
 
     public Instant getCreatedAt() {
