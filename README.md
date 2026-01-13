@@ -26,9 +26,9 @@ A backend-focused **Spring Boot REST API** for managing projects and tasks, desi
 - Validation and centralized exception handling
 
 ### Tasks
-- Tasks belong to exactly one project
 - Full CRUD operations
 - Partial updates via `PATCH`
+- Tasks belong to exactly one project
 - Task status lifecycle (`TODO`, `IN_PROGRESS`, `DONE`)
 - Priority, due date and assignee support
 - Domain rules enforced in the service layer (e.g. immutable project assignment)
