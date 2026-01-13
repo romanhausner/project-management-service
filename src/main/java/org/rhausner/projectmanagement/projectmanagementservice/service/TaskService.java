@@ -1,9 +1,13 @@
 package org.rhausner.projectmanagement.projectmanagementservice.service;
 
+import org.rhausner.projectmanagement.projectmanagementservice.exception.BadRequestException;
+import org.rhausner.projectmanagement.projectmanagementservice.exception.ImmutableFieldException;
 import org.rhausner.projectmanagement.projectmanagementservice.exception.TaskNotFoundException;
+import org.rhausner.projectmanagement.projectmanagementservice.dto.command.TaskPatchCommand;
 import org.rhausner.projectmanagement.projectmanagementservice.model.Task;
 import org.rhausner.projectmanagement.projectmanagementservice.repository.TaskRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -59,5 +63,102 @@ public class TaskService {
      */
     public Task createTask(Task task) {
         return taskRepository.save(task);
+    }
+
+    /**
+     * Update an existing task with new values (full replace semantics).
+     *
+     * This method runs in a transactional context and updates the managed entity
+     * with the values from the provided {@code update} object. The returned instance
+     * is the managed entity.
+     *
+     * @param id the id of the task to update
+     * @param update an entity carrying the new state
+     * @return the updated managed {@link Task}
+     * @throws TaskNotFoundException if the task does not exist
+     */
+    @Transactional
+    public Task updateTask(Integer id, Task update) {
+        Task existing = getTaskById(id);
+        existing.setTitle(update.getTitle());
+        existing.setDescription(update.getDescription());
+        existing.setDueDate(update.getDueDate());
+        existing.setAssignee(update.getAssignee());
+        // Use domain methods for stateful transitions
+        existing.changeStatus(update.getStatus());
+        existing.setPriority(update.getPriority());
+        return existing;
+    }
+
+    /**
+     * Delete a task by id.
+     *
+     * @param id the id of the task to delete
+     */
+    public void deleteTaskById(Integer id) {
+        taskRepository.deleteById(id);
+    }
+
+    /**
+     * Apply a partial update (PATCH semantics) to an existing task.
+     *
+     * The {@link TaskPatchCommand} encodes presence/absence semantics for individual
+     * fields; this method applies those changes inside a transaction. Validation errors
+     * result in a {@link BadRequestException}.
+     *
+     * @param id the id of the task to patch
+     * @param cmd the patch command describing requested updates
+     * @return the patched managed {@link Task}
+     * @throws TaskNotFoundException if the task does not exist
+     * @throws BadRequestException for invalid patch values
+     */
+    @Transactional
+    public Task patchTask(Integer id, TaskPatchCommand cmd) {
+        Task task = getTaskById(id);
+
+        if(cmd.isProjectIdPresent()) {
+            cmd.getProjectId().ifPresent(projectId -> {
+                if (projectId != task.getProject().getId()) {
+                    throw new ImmutableFieldException("Project ID");
+                }
+            });
+        }
+
+        if(cmd.isIdPresent()) {
+            cmd.getId().ifPresent(taskId -> {
+                if (!taskId.equals(task.getId())) {
+                    throw new ImmutableFieldException("ID");
+                }
+            });
+        }
+
+        cmd.getTitle().ifPresent(title -> {
+            if (title.isBlank()) {
+                throw new BadRequestException("title must not be blank");
+            }
+            task.setTitle(title);
+        });
+
+        if (cmd.isDescriptionPresent()) {
+            cmd.getDescription().ifPresentOrElse(task::setDescription, () -> task.setDescription(null));
+        }
+
+        // due date presence/clear handled
+        cmd.getDueDate().ifPresent(date -> task.setDueDate(date));
+        if (cmd.isDueDatePresent() && cmd.getDueDate().isEmpty()) {
+            // explicit clear
+            task.setDueDate(null);
+        }
+
+        // Use domain methods for state transitions when status is provided
+        cmd.getStatus().ifPresent(task::changeStatus);
+
+        cmd.getPriority().ifPresent(task::setPriority);
+
+        if (cmd.isAssigneePresent()) {
+            cmd.getAssignee().ifPresentOrElse(task::setAssignee, () -> task.setAssignee(null));
+        }
+
+        return task;
     }
 }

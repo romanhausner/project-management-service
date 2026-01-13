@@ -7,6 +7,15 @@ import java.time.Instant;
 import java.time.LocalDate;
 import java.util.Objects;
 
+/**
+ * Domain JPA entity representing a Task within a Project.
+ *
+ * This entity stores task-related attributes such as title, description, status,
+ * priority, due date and assignee. It contains small pieces of domain logic
+ * (e.g. {@link #start()} and {@link #markDone()}) to ensure state transitions are
+ * performed consistently and any side-effects (like setting {@code completedAt})
+ * are applied in a single place.
+ */
 @Entity
 public class Task {
 
@@ -45,6 +54,15 @@ public class Task {
     public Task() {
     }
 
+    /**
+     * Convenience constructor for creating a new Task with its required associations.
+     *
+     * The constructor sets the required {@code project} reference and {@code title};
+     * other fields can be filled in later by the service or mapper.
+     *
+     * @param project the associated project (must not be null)
+     * @param title the task title (must not be null)
+     */
     public Task(Project project, String title) {
         this.project = Objects.requireNonNull(project);
         this.title = Objects.requireNonNull(title);
@@ -123,6 +141,14 @@ public class Task {
         return completedAt;
     }
 
+    /**
+     * Equality is based on id, project, title and description. Note that the id may be
+     * {@code null} for transient instances; the equality logic mirrors the previous
+     * implementation and intentionally includes multiple fields for identity comparison.
+     *
+     * @param o the other object to compare
+     * @return {@code true} if the objects are considered equal
+     */
     @Override
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) return false;
@@ -130,6 +156,11 @@ public class Task {
         return Objects.equals(id, task.id) && Objects.equals(project, task.project) && Objects.equals(title, task.title) && Objects.equals(description, task.description);
     }
 
+    /**
+     * Hash code implementation matching {@link #equals(Object)}.
+     *
+     * @return hash code value
+     */
     @Override
     public int hashCode() {
         return Objects.hash(id, project, title, description);
@@ -158,6 +189,32 @@ public class Task {
         this.completedAt = Instant.now();
     }
 
+    /**
+     * Change the task status to the specified new status.
+     *
+     * Valid transitions are:
+     * - TODO -> IN_PROGRESS
+     * - IN_PROGRESS -> DONE
+     * - TODO -> DONE
+     *
+     * Attempting to change to the same status has no effect.
+     * Any other transition will result in an InvalidTaskStateException.
+     *
+     * @param newStatus the desired new status
+     */
+    public void changeStatus(TaskStatus newStatus) {
+        if (newStatus == this.status) {
+            return; // idempotent
+        }
+
+        switch (newStatus) {
+            case IN_PROGRESS -> start();
+            case DONE -> markDone();
+            default -> throw new InvalidTaskStateException(
+                    "Illegal transition from " + status + " to " + newStatus
+            );
+        }
+    }
+
 
 }
-

@@ -74,6 +74,57 @@ public class RestExceptionHandler {
     }
 
     /**
+     * Handle situations where a task state transition is invalid.
+     *
+     * This handler captures {@link InvalidTaskStateException} raised by domain logic
+     * (for example attempting to start a task that is already completed) and
+     * returns HTTP 400 (Bad Request) with a brief error message.
+     *
+     * @param ex the InvalidTaskStateException indicating an invalid state change
+     * @return a ResponseEntity with 400 status and a structured error body
+     */
+    @ExceptionHandler(InvalidTaskStateException.class)
+    public ResponseEntity<Object> handleInvalidTaskState(InvalidTaskStateException ex) {
+        Map<String, Object> body = new HashMap<>();
+        body.put("status", HttpStatus.BAD_REQUEST.value());
+        body.put("error", ex.getMessage());
+        return new ResponseEntity<>(body, HttpStatus.BAD_REQUEST);
+    }
+
+    /**
+     * Handle cases where a requested task was not found.
+     *
+     * Returns HTTP 404 (Not Found) with the exception message in the response body.
+     *
+     * @param ex the TaskNotFoundException thrown when a task is missing
+     * @return a ResponseEntity with 404 status and the exception message
+     */
+    @ExceptionHandler(TaskNotFoundException.class)
+    public ResponseEntity<Object> handleTaskNotFound(TaskNotFoundException ex) {
+        return ResponseEntity
+                .status(HttpStatus.NOT_FOUND)
+                .body(ex.getMessage());
+    }
+
+    /**
+     * Handle attempts to modify immutable fields on domain entities.
+     *
+     * When the application detects a client attempt to change an immutable field
+     * (e.g. changing the associated project id of an existing task), an
+     * {@link ImmutableFieldException} is thrown and mapped to HTTP 400 (Bad Request).
+     *
+     * @param ex the ImmutableFieldException describing the immutable field
+     * @return a ResponseEntity with 400 status and a structured error body
+     */
+    @ExceptionHandler(ImmutableFieldException.class)
+    public ResponseEntity<Object> handleImmutableFieldException(ImmutableFieldException ex) {
+        Map<String, Object> body = new HashMap<>();
+        body.put("status", HttpStatus.BAD_REQUEST.value());
+        body.put("error", ex.getMessage());
+        return new ResponseEntity<>(body, HttpStatus.BAD_REQUEST);
+    }
+
+    /**
      * Fallback handler for all uncaught exceptions.
      *
      * Returns HTTP 500 (Internal Server Error) with a JSON object containing the status
