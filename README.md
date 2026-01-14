@@ -7,7 +7,7 @@ A backend-focused **Spring Boot REST API** for managing projects and tasks, desi
 ## Tech Stack
 
 - Java 21
-- Spring Boot 3.4.x
+- Spring Boot 3.3.7
 - Spring Web (REST), Spring Data JPA
 - PostgreSQL
 - Jackson
