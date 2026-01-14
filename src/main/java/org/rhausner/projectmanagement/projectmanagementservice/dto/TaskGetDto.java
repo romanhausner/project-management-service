@@ -1,5 +1,6 @@
 package org.rhausner.projectmanagement.projectmanagementservice.dto;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import org.rhausner.projectmanagement.projectmanagementservice.model.TaskPriority;
 import org.rhausner.projectmanagement.projectmanagementservice.model.TaskStatus;
 
@@ -9,17 +10,37 @@ import java.time.LocalDate;
 /**
  * DTO returned for GET requests representing a Task's public representation.
  */
+@Schema(description = "Represents a task in GET responses")
 public class TaskGetDto {
 
+    @Schema(description = "Unique identifier of the task", example = "1")
     private Integer id;
+
+    @Schema(description = "ID of the project this task belongs to", example = "1")
     private Integer projectId;
+
+    @Schema(description = "Title of the task", example = "Implement login feature")
     private String title;
+
+    @Schema(description = "Detailed description of the task", example = "Create user authentication with OAuth2")
     private String description;
+
+    @Schema(description = "Current status of the task", example = "IN_PROGRESS")
     private TaskStatus status;
+
+    @Schema(description = "Priority level of the task", example = "HIGH")
     private TaskPriority priority;
+
+    @Schema(description = "Due date for task completion", example = "2026-02-28")
     private LocalDate dueDate;
+
+    @Schema(description = "Person assigned to this task", example = "john.doe@example.com")
     private String assignee;
+
+    @Schema(description = "Timestamp when the task was created", example = "2026-01-15T10:30:00Z")
     private Instant createdAt;
+
+    @Schema(description = "Timestamp when the task was completed", example = "2026-02-15T14:45:00Z")
     private Instant completedAt;
 
     /**

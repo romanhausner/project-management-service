@@ -59,6 +59,29 @@ PATCH  /api/v1/tasks/{id}
 DELETE /api/v1/tasks/{id}
 ```
 
+## API Documentation (OpenAPI / Swagger)
+
+The API is fully documented using **OpenAPI 3** and can be explored interactively via **Swagger UI**.
+
+After starting the application, Swagger UI is available at:
+
+```
+http://localhost:8080/swagger-ui.html
+```
+
+The OpenAPI specification can be accessed at:
+
+```
+http://localhost:8080/v3/api-docs
+```
+
+The documentation includes:
+- All available endpoints
+- Request and response schemas
+- HTTP status codes and error responses
+- Example payloads
+
+
 ---
 
 ## Architecture

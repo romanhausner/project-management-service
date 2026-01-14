@@ -1,5 +1,6 @@
 package org.rhausner.projectmanagement.projectmanagementservice.dto;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import org.rhausner.projectmanagement.projectmanagementservice.model.ProjectStatus;
 
 import java.time.LocalDate;
@@ -7,13 +8,25 @@ import java.time.LocalDate;
 /**
  * DTO returned for GET requests representing a Project's public representation.
  */
+@Schema(description = "Represents a project in GET responses")
 public class ProjectGetDto {
 
+    @Schema(description = "Unique identifier of the project", example = "1")
     private Integer id;
+
+    @Schema(description = "Name of the project", example = "Website Redesign")
     private String name;
+
+    @Schema(description = "Detailed description of the project", example = "Complete overhaul of the company website")
     private String description;
+
+    @Schema(description = "Start date of the project", example = "2026-01-15")
     private LocalDate startDate;
+
+    @Schema(description = "End date of the project", example = "2026-06-30")
     private LocalDate endDate;
+
+    @Schema(description = "Current status of the project", example = "IN_PROGRESS")
     private ProjectStatus projectStatus;
 
     /**
