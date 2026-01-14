@@ -9,7 +9,6 @@ import java.util.Objects;
 
 /**
  * Domain entity representing a project in the system.
- *
  * This JPA entity stores the minimal attributes for a project such as name,
  * description, start/end dates and the current {@link ProjectStatus}. It is
  * persisted using JPA and mapped to a database table by the framework.
@@ -30,7 +29,7 @@ public class Project {
     @Column(nullable = false)
     private ProjectStatus projectStatus;
     @OneToMany(mappedBy = "project", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Task> tasks = new ArrayList<>();
+    private final List<Task> tasks = new ArrayList<>();
 
     /**
      * No-args constructor required by JPA.
@@ -83,7 +82,6 @@ public class Project {
 
     /**
      * Clear the description (set it to {@code null}).
-     *
      * This method is useful to explicitly remove an optional description value
      * (for example when applying a PATCH that clears the field).
      */
@@ -109,7 +107,6 @@ public class Project {
 
     /**
      * Clear the end date (set it to {@code null}).
-     *
      * Use this to explicitly remove an end date value when the business logic
      * requires clearing the field.
      */
@@ -149,7 +146,6 @@ public class Project {
 
     /**
      * Add a task to this project.
-     *
      * This method ensures bidirectional consistency: it adds the task to this
      * project's task list and sets the task's project reference to this instance.
      * If the task already belongs to a different project, an {@link IllegalStateException}
@@ -175,7 +171,6 @@ public class Project {
 
     /**
      * Remove a task from this project.
-     *
      * This method ensures bidirectional consistency: it removes the task from this
      * project's task list and clears the task's project reference.
      *
