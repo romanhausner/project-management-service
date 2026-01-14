@@ -13,7 +13,7 @@ public class ProjectNotFoundException extends RuntimeException {
      *
      * @param id the id of the project that could not be found
      */
-    public ProjectNotFoundException(Integer id) {
+    public ProjectNotFoundException(Long id) {
         super("Project with id " + id + " not found");
     }
 

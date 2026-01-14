@@ -53,8 +53,8 @@ class TaskControllerTest {
 
     @Test
     void getTasks_returnsList() throws Exception {
-        int taskId = 1;
-        int projectId = 10;
+        Long taskId = 1L;
+        Long projectId = 10L;
         String title = "Test Task";
         String desc = "Task description";
         TaskStatus status = TaskStatus.TODO;
@@ -103,8 +103,8 @@ class TaskControllerTest {
 
     @Test
     void getTaskById_returnsTask() throws Exception {
-        int taskId = 5;
-        int projectId = 20;
+        Long taskId = 5L;
+        Long projectId = 20L;
         String title = "Single Task";
         String desc = "Single task desc";
         TaskStatus status = TaskStatus.IN_PROGRESS;
@@ -150,8 +150,8 @@ class TaskControllerTest {
 
     @Test
     void createTask_returnsCreated() throws Exception {
-        int taskId = 42;
-        int projectId = 10;
+        Long taskId = 42L;
+        Long projectId = 10L;
         String title = "New Task";
         String desc = "New task description";
         TaskStatus status = TaskStatus.TODO;
@@ -213,8 +213,8 @@ class TaskControllerTest {
 
     @Test
     void updateTask_returnsUpdated() throws Exception {
-        int taskId = 7;
-        int projectId = 15;
+        Long taskId = 7L;
+        Long projectId = 15L;
         String title = "Updated Task";
         String desc = "Updated description";
         TaskStatus status = TaskStatus.IN_PROGRESS;
@@ -274,8 +274,8 @@ class TaskControllerTest {
 
     @Test
     void patchTask_returnsPatched() throws Exception {
-        int taskId = 99;
-        int projectId = 25;
+        Long taskId = 99L;
+        Long projectId = 25L;
         String title = "Patched Task";
         String desc = "Patched description";
         TaskStatus status = TaskStatus.DONE;
@@ -335,7 +335,7 @@ class TaskControllerTest {
 
     @Test
     void deleteTask_returnsNoContent() throws Exception {
-        int taskId = 5;
+        Long taskId = 5L;
         doNothing().when(taskService).deleteTaskById(taskId);
 
         mockMvc.perform(delete("/api/v1/tasks/" + taskId))

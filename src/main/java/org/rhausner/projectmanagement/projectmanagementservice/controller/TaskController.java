@@ -66,7 +66,7 @@ public class TaskController {
     })
     @GetMapping("/{id}")
     public TaskGetDto getTaskById(
-            @Parameter(description = "ID of the task to retrieve") @PathVariable Integer id) {
+            @Parameter(description = "ID of the task to retrieve") @PathVariable Long id) {
         return taskMapper.toGetDto(taskService.getTaskById(id));
     }
 
@@ -101,7 +101,7 @@ public class TaskController {
     })
     @PutMapping("/{id}")
     public TaskGetDto updateTask(
-            @Parameter(description = "ID of the task to update") @PathVariable Integer id,
+            @Parameter(description = "ID of the task to update") @PathVariable Long id,
             @Valid @RequestBody TaskUpdateDto taskDto) {
         Task update = taskMapper.fromUpdateDto(taskDto);
         Task updated = taskService.updateTask(id, update);
@@ -120,7 +120,7 @@ public class TaskController {
     })
     @PatchMapping("/{id}")
     public TaskGetDto patchTask(
-            @Parameter(description = "ID of the task to patch") @PathVariable Integer id,
+            @Parameter(description = "ID of the task to patch") @PathVariable Long id,
             @io.swagger.v3.oas.annotations.parameters.RequestBody(
                     description = "JSON object with fields to update",
                     content = @Content(schema = @Schema(implementation = Object.class)))
@@ -141,7 +141,7 @@ public class TaskController {
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteTaskById(
-            @Parameter(description = "ID of the task to delete") @PathVariable Integer id) {
+            @Parameter(description = "ID of the task to delete") @PathVariable Long id) {
         taskService.deleteTaskById(id);
     }
 

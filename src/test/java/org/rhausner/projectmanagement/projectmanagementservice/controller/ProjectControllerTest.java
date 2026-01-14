@@ -54,7 +54,7 @@ class ProjectControllerTest {
 
     @Test
     void getProjects_returnsList() throws Exception {
-        int projectId = 1;
+        Long projectId = 1L;
         String name = "Test Project";
         String desc = "desc";
         LocalDate startDate = LocalDate.of(2026, 1, 1);
@@ -89,7 +89,7 @@ class ProjectControllerTest {
 
     @Test
     void createProject_returnsCreated() throws Exception {
-        int projectId = 42;
+        Long projectId = 42L;
         String name = "New Project";
         String desc = "desc";
         LocalDate startDate = LocalDate.of(2026, 2, 1);
@@ -129,7 +129,7 @@ class ProjectControllerTest {
 
     @Test
     void updateProject_returnsUpdated() throws Exception {
-        int projectId = 7;
+        Long projectId = 7L;
         String name = "Updated";
         String desc = "newdesc";
         LocalDate startDate = LocalDate.of(2026, 3, 1);
@@ -170,7 +170,7 @@ class ProjectControllerTest {
 
     @Test
     void patchProject_returnsPatched() throws Exception {
-        int projectId = 99;
+        Long projectId = 99L;
         String name = "Patched Project";
         String desc = "patched desc";
         LocalDate startDate = LocalDate.of(2026, 5, 1);
@@ -214,7 +214,7 @@ class ProjectControllerTest {
 
     @Test
     void deleteProject_returnsNoContent() throws Exception {
-        int projectId = 5;
+        Long projectId = 5L;
         doNothing().when(projectService).deleteProjectById(projectId);
 
         mockMvc.perform(delete("/api/v1/projects/" + projectId))

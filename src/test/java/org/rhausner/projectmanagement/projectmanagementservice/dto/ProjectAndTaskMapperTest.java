@@ -49,7 +49,7 @@ class ProjectAndTaskMapperTest {
     @Test
     void projectMapper_toGetDto() {
         Project project = new Project();
-        project.setId(1);
+        project.setId(1L);
         project.setName("Mapper Test");
         project.setDescription("Mapper Description");
         project.setStartDate(LocalDate.of(2026, 3, 1));
@@ -144,10 +144,10 @@ class ProjectAndTaskMapperTest {
     @Test
     void taskMapper_toGetDto() {
         Project project = new Project();
-        project.setId(10);
+        project.setId(10L);
 
         Task task = new Task();
-        task.setId(5);
+        task.setId(5L);
         task.setProject(project);
         task.setTitle("Task Title");
         task.setDescription("Task Desc");
@@ -183,7 +183,7 @@ class ProjectAndTaskMapperTest {
     @Test
     void taskMapper_toGetDto_nullProject() {
         Task task = new Task();
-        task.setId(1);
+        task.setId(1L);
         task.setProject(null);
         task.setTitle("No Project Task");
 
@@ -199,7 +199,7 @@ class ProjectAndTaskMapperTest {
     @Test
     void taskMapper_fromCreateDto() {
         var createDto = new TaskCreateDto(
-                99, "New Task", "Task Desc", TaskStatus.TODO, TaskPriority.LOW, LocalDate.of(2026, 8, 1), "bob"
+                99L, "New Task", "Task Desc", TaskStatus.TODO, TaskPriority.LOW, LocalDate.of(2026, 8, 1), "bob"
         );
 
         Task task = taskMapper.fromCreateDto(createDto);
@@ -229,7 +229,7 @@ class ProjectAndTaskMapperTest {
     @Test
     void taskMapper_fromCreateDto_defaults() {
         var createDto = new TaskCreateDto(
-                1, "Task", null, null, null, null, null
+                1L, "Task", null, null, null, null, null
         );
 
         Task task = taskMapper.fromCreateDto(createDto);
@@ -350,7 +350,7 @@ class ProjectAndTaskMapperTest {
     @Test
     void taskCreateDto_validData_noErrors() {
         var dto = new TaskCreateDto(
-                1, "Valid Title", "Description", TaskStatus.TODO, TaskPriority.MEDIUM, LocalDate.of(2026, 6, 1), "john"
+                1L, "Valid Title", "Description", TaskStatus.TODO, TaskPriority.MEDIUM, LocalDate.of(2026, 6, 1), "john"
         );
 
         Set<ConstraintViolation<TaskCreateDto>> violations = validator.validate(dto);
@@ -379,7 +379,7 @@ class ProjectAndTaskMapperTest {
     @Test
     void taskCreateDto_blankTitle_hasError() {
         var dto = new TaskCreateDto(
-                1, "", "Description", TaskStatus.TODO, TaskPriority.MEDIUM, null, null
+                1L, "", "Description", TaskStatus.TODO, TaskPriority.MEDIUM, null, null
         );
 
         Set<ConstraintViolation<TaskCreateDto>> violations = validator.validate(dto);
@@ -394,7 +394,7 @@ class ProjectAndTaskMapperTest {
     @Test
     void taskCreateDto_nullTitle_hasError() {
         var dto = new TaskCreateDto(
-                1, null, "Description", TaskStatus.TODO, TaskPriority.MEDIUM, null, null
+                1L, null, "Description", TaskStatus.TODO, TaskPriority.MEDIUM, null, null
         );
 
         Set<ConstraintViolation<TaskCreateDto>> violations = validator.validate(dto);
@@ -409,7 +409,7 @@ class ProjectAndTaskMapperTest {
     @Test
     void taskCreateDto_nullOptionalFields_noErrors() {
         var dto = new TaskCreateDto(
-                1, "Title", null, TaskStatus.TODO, null, null, null
+                1L, "Title", null, TaskStatus.TODO, null, null, null
         );
 
         Set<ConstraintViolation<TaskCreateDto>> violations = validator.validate(dto);

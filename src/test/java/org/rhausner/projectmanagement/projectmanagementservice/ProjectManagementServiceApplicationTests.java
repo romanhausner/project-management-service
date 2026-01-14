@@ -207,7 +207,7 @@ class ProjectManagementServiceApplicationTests {
         project.setEndDate(LocalDate.of(2026, 12, 31));
         project.setProjectStatus(ProjectStatus.PLANNED);
         project = projectRepository.save(project);
-        Integer projectId = project.getId();
+        Long projectId = project.getId();
 
         // Patch only the name
         var patchCommand = org.rhausner.projectmanagement.projectmanagementservice.dto.command.ProjectPatchCommand.from(
@@ -237,7 +237,7 @@ class ProjectManagementServiceApplicationTests {
         project.setProjectStatus(ProjectStatus.PLANNED);
 
         Project saved = projectRepository.save(project);
-        Integer id = saved.getId();
+        Long id = saved.getId();
 
         assertTrue(projectRepository.findById(id).isPresent());
 
@@ -251,7 +251,7 @@ class ProjectManagementServiceApplicationTests {
      */
     @Test
     void deleteNonExistentProject_throwsProjectNotFoundException() {
-        Integer nonExistentId = 99999;
+        Long nonExistentId = 99999L;
 
         // Verify the project does not exist
         assertFalse(projectRepository.findById(nonExistentId).isPresent());
@@ -355,7 +355,7 @@ class ProjectManagementServiceApplicationTests {
         task.setDueDate(LocalDate.of(2026, 6, 15));
         task.setAssignee("john.doe");
         Task saved = taskRepository.save(task);
-        Integer taskId = saved.getId();
+        Long taskId = saved.getId();
 
         // Patch only the priority
         var patchCommand = TaskPatchCommand.from(
@@ -393,7 +393,7 @@ class ProjectManagementServiceApplicationTests {
         task.setStatus(TaskStatus.TODO);
 
         Task saved = taskRepository.save(task);
-        Integer id = saved.getId();
+        Long id = saved.getId();
 
         assertTrue(taskRepository.findById(id).isPresent());
 
@@ -488,7 +488,7 @@ class ProjectManagementServiceApplicationTests {
         task.setTitle("In Progress Task");
         task.setStatus(TaskStatus.IN_PROGRESS);
         Task saved = taskRepository.save(task);
-        Integer taskId = saved.getId();
+        Long taskId = saved.getId();
 
         // Verify completedAt is not set
         assertNull(saved.getCompletedAt(), "completedAt should be null before marking done");
@@ -542,7 +542,7 @@ class ProjectManagementServiceApplicationTests {
      */
     @Test
     void deleteNonExistentTask_throwsTaskNotFoundException() {
-        Integer nonExistentId = 99999;
+        Long nonExistentId = 99999L;
 
         // Verify the task does not exist
         assertFalse(taskRepository.findById(nonExistentId).isPresent());
@@ -566,7 +566,7 @@ class ProjectManagementServiceApplicationTests {
         project.setStartDate(LocalDate.of(2026, 1, 1));
         project.setProjectStatus(ProjectStatus.PLANNED);
         project = projectRepository.save(project);
-        Integer projectId = project.getId();
+        Long projectId = project.getId();
 
         // Create tasks for the project
         Task task1 = new Task();
@@ -574,14 +574,14 @@ class ProjectManagementServiceApplicationTests {
         task1.setTitle("Task 1");
         task1.setStatus(TaskStatus.TODO);
         task1 = taskRepository.save(task1);
-        Integer task1Id = task1.getId();
+        Long task1Id = task1.getId();
 
         Task task2 = new Task();
         project.addTask(task2);
         task2.setTitle("Task 2");
         task2.setStatus(TaskStatus.IN_PROGRESS);
         task2 = taskRepository.save(task2);
-        Integer task2Id = task2.getId();
+        Long task2Id = task2.getId();
 
         // Verify project and tasks exist
         assertTrue(projectRepository.findById(projectId).isPresent());

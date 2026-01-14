@@ -48,7 +48,7 @@ public class TaskService {
      * @return the found {@link Task}
      * @throws TaskNotFoundException if no task with the given id exists
      */
-    public Task getTaskById(Integer id) {
+    public Task getTaskById(Long id) {
         return taskRepository.findById(id).orElseThrow(() -> new TaskNotFoundException(id));
     }
 
@@ -78,7 +78,7 @@ public class TaskService {
      * @throws TaskNotFoundException if the task does not exist
      */
     @Transactional
-    public Task updateTask(Integer id, Task update) {
+    public Task updateTask(Long id, Task update) {
         Task existing = getTaskById(id);
         existing.setTitle(update.getTitle());
         existing.setDescription(update.getDescription());
@@ -97,7 +97,7 @@ public class TaskService {
      * @throws TaskNotFoundException if no task with the given id exists
      */
     @Transactional
-    public void deleteTaskById(Integer id) {
+    public void deleteTaskById(Long id) {
         Task task = getTaskById(id); // Ensure existence
         Project project = task.getProject();
         if (project != null) {
@@ -119,7 +119,7 @@ public class TaskService {
      * @throws BadRequestException for invalid patch values
      */
     @Transactional
-    public Task patchTask(Integer id, TaskPatchCommand cmd) {
+    public Task patchTask(Long id, TaskPatchCommand cmd) {
         Task task = getTaskById(id);
 
         if(cmd.isProjectIdPresent()) {

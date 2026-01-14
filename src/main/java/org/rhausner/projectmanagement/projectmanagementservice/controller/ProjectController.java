@@ -82,7 +82,7 @@ public class ProjectController {
     })
     @GetMapping("/{id}")
     public ProjectGetDto getProjectById(
-            @Parameter(description = "ID of the project to retrieve") @PathVariable Integer id) {
+            @Parameter(description = "ID of the project to retrieve") @PathVariable Long id) {
         return projectMapper.toGetDto(projectService.getProjectById(id));
     }
 
@@ -101,7 +101,7 @@ public class ProjectController {
     })
     @PutMapping("/{id}")
     public ProjectGetDto update(
-            @Parameter(description = "ID of the project to update") @PathVariable Integer id,
+            @Parameter(description = "ID of the project to update") @PathVariable Long id,
             @Valid @RequestBody ProjectUpdateDto projectDto) {
         Project project = projectMapper.fromUpdateDto(projectDto);
         Project updated = projectService.updateProject(id, project);
@@ -120,7 +120,7 @@ public class ProjectController {
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteProjectById(
-            @Parameter(description = "ID of the project to delete") @PathVariable Integer id) {
+            @Parameter(description = "ID of the project to delete") @PathVariable Long id) {
         projectService.deleteProjectById(id);
     }
 
@@ -139,7 +139,7 @@ public class ProjectController {
     })
     @PatchMapping("/{id}")
     public ProjectGetDto patchProject(
-            @Parameter(description = "ID of the project to patch") @PathVariable Integer id,
+            @Parameter(description = "ID of the project to patch") @PathVariable Long id,
             @io.swagger.v3.oas.annotations.parameters.RequestBody(
                     description = "JSON object with fields to update",
                     content = @Content(schema = @Schema(implementation = Object.class)))

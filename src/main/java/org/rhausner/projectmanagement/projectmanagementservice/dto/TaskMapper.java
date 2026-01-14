@@ -21,7 +21,7 @@ public class TaskMapper {
      */
     public TaskGetDto toGetDto(Task task) {
         if (task == null) return null;
-        Integer projectId = task.getProject() != null ? task.getProject().getId() : null;
+        Long projectId = task.getProject() != null ? task.getProject().getId() : null;
         return new TaskGetDto(
                 task.getId(),
                 projectId,

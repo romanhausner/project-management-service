@@ -13,7 +13,7 @@ public class TaskNotFoundException extends RuntimeException{
      *
      * @param id the id of the task that could not be found
      */
-    public TaskNotFoundException(Integer id) {
+    public TaskNotFoundException(Long id) {
         super("Task with id " + id + " not found");
     }
 }

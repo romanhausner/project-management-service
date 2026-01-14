@@ -14,10 +14,10 @@ import java.time.LocalDate;
 public class TaskGetDto {
 
     @Schema(description = "Unique identifier of the task", example = "1")
-    private Integer id;
+    private Long id;
 
     @Schema(description = "ID of the project this task belongs to", example = "1")
-    private Integer projectId;
+    private Long projectId;
 
     @Schema(description = "Title of the task", example = "Implement login feature")
     private String title;
@@ -52,7 +52,7 @@ public class TaskGetDto {
     /**
      * All-args constructor for convenient manual instantiation in tests or internal code.
      */
-    public TaskGetDto(Integer id, Integer projectId, String title, String description, TaskStatus status, TaskPriority priority, LocalDate dueDate, String assignee, Instant createdAt, Instant completedAt) {
+    public TaskGetDto(Long id, Long projectId, String title, String description, TaskStatus status, TaskPriority priority, LocalDate dueDate, String assignee, Instant createdAt, Instant completedAt) {
         this.id = id;
         this.projectId = projectId;
         this.title = title;
@@ -65,19 +65,19 @@ public class TaskGetDto {
         this.completedAt = completedAt;
     }
 
-    public Integer getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(Integer id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
-    public Integer getProjectId() {
+    public Long getProjectId() {
         return projectId;
     }
 
-    public void setProjectId(Integer projectId) {
+    public void setProjectId(Long projectId) {
         this.projectId = projectId;
     }
 

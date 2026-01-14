@@ -58,7 +58,7 @@ public class ProjectService {
      * @return the found {@link Project}
      * @throws ProjectNotFoundException if no project with the given id exists
      */
-    public Project getProjectById(Integer id) {
+    public Project getProjectById(Long id) {
         return projectRepository.findById(id)
                 .orElseThrow(() -> new ProjectNotFoundException(id));
     }
@@ -75,7 +75,7 @@ public class ProjectService {
      * @throws ProjectNotFoundException if the project does not exist
      */
     @Transactional
-    public Project updateProject(Integer id, Project update) {
+    public Project updateProject(Long id, Project update) {
         Project existing = getProjectById(id);
         existing.setName(update.getName());
         existing.setDescription(update.getDescription());
@@ -90,7 +90,7 @@ public class ProjectService {
      *
      * @param id the id of the project to delete
      */
-    public void deleteProjectById(Integer id) {
+    public void deleteProjectById(Long id) {
         getProjectById(id); // ensure existence
         projectRepository.deleteById(id);
     }
@@ -108,7 +108,7 @@ public class ProjectService {
      * @throws BadRequestException for invalid patch values
      */
     @Transactional
-    public Project patchProject(Integer id, ProjectPatchCommand cmd) {
+    public Project patchProject(Long id, ProjectPatchCommand cmd) {
         Project project = getProjectById(id);
         cmd.getName().ifPresent(name -> {
             if (name.isBlank()) {

@@ -16,7 +16,7 @@ public class TaskCreateDto {
 
     @Schema(description = "ID of the project this task belongs to", example = "1", requiredMode = Schema.RequiredMode.REQUIRED)
     @NotNull
-    private Integer projectId;
+    private Long projectId;
 
     @Schema(description = "Title of the task", example = "Implement login feature", requiredMode = Schema.RequiredMode.REQUIRED)
     @NotBlank
@@ -47,7 +47,7 @@ public class TaskCreateDto {
     /**
      * All-args constructor for convenient manual instantiation in tests or internal code.
      */
-    public TaskCreateDto(Integer projectId, String title, String description, TaskStatus status, TaskPriority priority, LocalDate dueDate, String assignee) {
+    public TaskCreateDto(Long projectId, String title, String description, TaskStatus status, TaskPriority priority, LocalDate dueDate, String assignee) {
         this.projectId = projectId;
         this.title = title;
         this.description = description;
@@ -57,11 +57,11 @@ public class TaskCreateDto {
         this.assignee = assignee;
     }
 
-    public Integer getProjectId() {
+    public Long getProjectId() {
         return projectId;
     }
 
-    public void setProjectId(Integer projectId) {
+    public void setProjectId(Long projectId) {
         this.projectId = projectId;
     }
 

@@ -12,7 +12,7 @@ import java.time.LocalDate;
 public class ProjectGetDto {
 
     @Schema(description = "Unique identifier of the project", example = "1")
-    private Integer id;
+    private Long id;
 
     @Schema(description = "Name of the project", example = "Website Redesign")
     private String name;
@@ -38,7 +38,7 @@ public class ProjectGetDto {
     /**
      * All-args constructor for convenient manual instantiation in tests or internal code.
      */
-    public ProjectGetDto(Integer id, String name, String description, LocalDate startDate, LocalDate endDate, ProjectStatus projectStatus) {
+    public ProjectGetDto(Long id, String name, String description, LocalDate startDate, LocalDate endDate, ProjectStatus projectStatus) {
         this.id = id;
         this.name = name;
         this.description = description;
@@ -47,11 +47,11 @@ public class ProjectGetDto {
         this.projectStatus = projectStatus;
     }
 
-    public Integer getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(Integer id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
