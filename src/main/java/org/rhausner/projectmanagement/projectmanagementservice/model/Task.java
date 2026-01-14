@@ -1,8 +1,6 @@
 package org.rhausner.projectmanagement.projectmanagementservice.model;
 
 import jakarta.persistence.*;
-import org.hibernate.annotations.OnDelete;
-import org.hibernate.annotations.OnDeleteAction;
 import org.rhausner.projectmanagement.projectmanagementservice.exception.InvalidTaskStateException;
 
 import java.time.Instant;
@@ -11,11 +9,10 @@ import java.util.Objects;
 
 /**
  * Domain JPA entity representing a Task within a Project.
- *
  * This entity stores task-related attributes such as title, description, status,
  * priority, due date and assignee. It contains small pieces of domain logic
  * (e.g. {@link #start()} and {@link #markDone()}) to ensure state transitions are
- * performed consistently and any side-effects (like setting {@code completedAt})
+ * performed consistently and any side effects (like setting {@code completedAt})
  * are applied in a single place.
  */
 @Entity
@@ -58,7 +55,6 @@ public class Task {
 
     /**
      * Convenience constructor for creating a new Task with its required associations.
-     *
      * The constructor sets the required {@code project} reference and {@code title};
      * other fields can be filled in later by the service or mapper.
      *
@@ -205,12 +201,12 @@ public class Task {
 
     /**
      * Change the task status to the specified new status.
-     *
+     * <p>
      * Valid transitions are:
      * - TODO -> IN_PROGRESS
      * - IN_PROGRESS -> DONE
      * - TODO -> DONE
-     *
+     * <p>
      * Attempting to change to the same status has no effect.
      * Any other transition will result in an InvalidTaskStateException.
      *

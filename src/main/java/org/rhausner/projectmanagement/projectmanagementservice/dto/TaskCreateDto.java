@@ -23,9 +23,15 @@ public class TaskCreateDto {
     private LocalDate dueDate;
     private String assignee;
 
+    /**
+     * No-args constructor required by Jackson and other frameworks.
+     */
     public TaskCreateDto() {
     }
 
+    /**
+     * All-args constructor for convenient manual instantiation in tests or internal code.
+     */
     public TaskCreateDto(Integer projectId, String title, String description, TaskStatus status, TaskPriority priority, LocalDate dueDate, String assignee) {
         this.projectId = projectId;
         this.title = title;

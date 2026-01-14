@@ -5,7 +5,7 @@ import com.fasterxml.jackson.annotation.JsonValue;
 
 /**
  * Enumeration of possible project lifecycle states.
- *
+ * <p>
  * The enum includes JSON-friendly factory and serializer helpers so that
  * incoming string values such as "in-progress" or "IN_PROGRESS" are accepted
  * and correctly mapped to enum constants. The JSON representation produced by
@@ -19,11 +19,9 @@ public enum ProjectStatus implements JsonEnum{
 
     /**
      * Create a {@link ProjectStatus} from a provided string value.
-     *
      * The factory is lenient: it accepts values in different case and also
      * hyphenated forms (e.g. "in-progress"). If the value does not match any
      * known status, an {@link IllegalArgumentException} is thrown.
-     *
      * This method is annotated with {@link JsonCreator} so Jackson can use it
      * during deserialization of JSON payloads.
      *
@@ -38,7 +36,6 @@ public enum ProjectStatus implements JsonEnum{
 
     /**
      * Return the JSON representation of this enum value.
-     *
      * The value produced is the enum name in upper case. Annotated with
      * {@link JsonValue} so Jackson will use it for serialization.
      *

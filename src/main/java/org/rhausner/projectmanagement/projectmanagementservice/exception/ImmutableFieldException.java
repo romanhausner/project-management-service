@@ -2,7 +2,6 @@ package org.rhausner.projectmanagement.projectmanagementservice.exception;
 
 /**
  * Exception thrown when a client attempts to modify a field that is considered immutable.
- *
  * This unchecked exception is used to signal that a request tried to change an attribute
  * which must remain constant for the lifetime of the entity (for example: changing the
  * associated project id of an existing task).

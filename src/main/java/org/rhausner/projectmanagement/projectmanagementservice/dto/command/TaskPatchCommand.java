@@ -11,7 +11,7 @@ import java.util.Optional;
 
 /**
  * Command object for PATCH-style updates to a Task.
- *
+ * <p>
  * This class mirrors the semantics of {@code ProjectPatchCommand} and represents
  * a partial update where each field is modelled as an {@link Optional} to
  * explicitly express presence/absence. For fields where "explicitly set to null"
@@ -43,7 +43,7 @@ public class TaskPatchCommand {
 
     /**
      * Parse a JsonNode into a TaskPatchCommand.
-     *
+     * <p>
      * Behavior notes:
      * - Missing fields leave the corresponding Optional empty (caller should not change that property).
      * - Fields with presence flags (description, dueDate, assignee) allow explicit clearing via JSON null.

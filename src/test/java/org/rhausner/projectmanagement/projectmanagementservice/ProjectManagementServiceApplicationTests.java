@@ -195,6 +195,38 @@ class ProjectManagementServiceApplicationTests {
     }
 
     /**
+     * Test that PATCH on a project preserves unchanged properties.
+     */
+    @Test
+    void patchProject_preservesUnchangedProperties() {
+        // Create a project with all properties set
+        Project project = new Project();
+        project.setName("Original Name");
+        project.setDescription("Original Description");
+        project.setStartDate(LocalDate.of(2026, 1, 1));
+        project.setEndDate(LocalDate.of(2026, 12, 31));
+        project.setProjectStatus(ProjectStatus.PLANNED);
+        project = projectRepository.save(project);
+        Integer projectId = project.getId();
+
+        // Patch only the name
+        var patchCommand = org.rhausner.projectmanagement.projectmanagementservice.dto.command.ProjectPatchCommand.from(
+                new ObjectMapper().createObjectNode().put("name", "Updated Name")
+        );
+
+        Project patched = projectService.patchProject(projectId, patchCommand);
+
+        // Verify name was updated
+        assertEquals("Updated Name", patched.getName());
+
+        // Verify all other properties remain unchanged
+        assertEquals("Original Description", patched.getDescription());
+        assertEquals(LocalDate.of(2026, 1, 1), patched.getStartDate());
+        assertEquals(LocalDate.of(2026, 12, 31), patched.getEndDate());
+        assertEquals(ProjectStatus.PLANNED, patched.getProjectStatus());
+    }
+
+    /**
      * Test deleting a project.
      */
     @Test
@@ -302,6 +334,49 @@ class ProjectManagementServiceApplicationTests {
     }
 
     /**
+     * Test that PATCH on a task preserves unchanged properties.
+     */
+    @Test
+    void patchTask_preservesUnchangedProperties() {
+        // Create a project
+        Project project = new Project();
+        project.setName("Task Project");
+        project.setStartDate(LocalDate.of(2026, 1, 1));
+        project.setProjectStatus(ProjectStatus.PLANNED);
+        project = projectRepository.save(project);
+
+        // Create a task with all properties set
+        Task task = new Task();
+        project.addTask(task);
+        task.setTitle("Original Title");
+        task.setDescription("Original Description");
+        task.setStatus(TaskStatus.TODO);
+        task.setPriority(TaskPriority.MEDIUM);
+        task.setDueDate(LocalDate.of(2026, 6, 15));
+        task.setAssignee("john.doe");
+        Task saved = taskRepository.save(task);
+        Integer taskId = saved.getId();
+
+        // Patch only the priority
+        var patchCommand = TaskPatchCommand.from(
+                new ObjectMapper().createObjectNode().put("priority", "HIGH")
+        );
+
+        Task patched = taskService.patchTask(taskId, patchCommand);
+
+        // Verify priority was updated
+        assertEquals(TaskPriority.HIGH, patched.getPriority());
+
+        // Verify all other properties remain unchanged
+        assertEquals("Original Title", patched.getTitle());
+        assertEquals("Original Description", patched.getDescription());
+        assertEquals(TaskStatus.TODO, patched.getStatus());
+        assertEquals(LocalDate.of(2026, 6, 15), patched.getDueDate());
+        assertEquals("john.doe", patched.getAssignee());
+        assertEquals(project.getId(), patched.getProject().getId());
+    }
+
+    /**
      * Test deleting a task.
      */
     @Test
@@ -393,6 +468,43 @@ class ProjectManagementServiceApplicationTests {
                 () -> taskService.patchTask(saved.getId(), patchCommand),
                 "Changing status from DONE to IN_PROGRESS should throw InvalidTaskStateException"
         );
+    }
+
+    /**
+     * Test that changing a task from IN_PROGRESS to DONE sets completedAt.
+     */
+    @Test
+    void changeTaskFromInProgressToDone_setsCompletedAt() {
+        // Create a project
+        Project project = new Project();
+        project.setName("Test Project");
+        project.setStartDate(LocalDate.of(2026, 1, 1));
+        project.setProjectStatus(ProjectStatus.PLANNED);
+        project = projectRepository.save(project);
+
+        // Create a task with status IN_PROGRESS
+        Task task = new Task();
+        project.addTask(task);
+        task.setTitle("In Progress Task");
+        task.setStatus(TaskStatus.IN_PROGRESS);
+        Task saved = taskRepository.save(task);
+        Integer taskId = saved.getId();
+
+        // Verify completedAt is not set
+        assertNull(saved.getCompletedAt(), "completedAt should be null before marking done");
+
+        // Patch status to DONE
+        var patchCommand = TaskPatchCommand.from(
+                new ObjectMapper().createObjectNode().put("status", "DONE")
+        );
+
+        Task patched = taskService.patchTask(taskId, patchCommand);
+
+        // Verify status is DONE
+        assertEquals(TaskStatus.DONE, patched.getStatus());
+
+        // Verify completedAt is now set
+        assertNotNull(patched.getCompletedAt(), "completedAt should be set after marking done");
     }
 
     /**
@@ -527,4 +639,5 @@ class ProjectManagementServiceApplicationTests {
                 "Adding a task that already belongs to another project should throw IllegalStateException"
         );
     }
+
 }

@@ -7,7 +7,6 @@ import org.springframework.stereotype.Component;
 /**
  * Mapper component that converts between domain {@link Project} entities
  * and the corresponding DTO representations used by the API.
- *
  * Implemented as a Spring {@code @Component} so it can be injected into controllers.
  * Mapping is manual and intentionally straightforward to keep control
  * over default values and null handling.
@@ -37,7 +36,6 @@ public class ProjectMapper {
 
     /**
      * Convert a {@link ProjectCreateDto} (incoming create payload) into a domain {@link Project}.
-     *
      * If the DTO's {@code projectStatus} is {@code null}, a sensible default of {@link ProjectStatus#PLANNED}
      * is applied. The method returns {@code null} when the input DTO itself is {@code null}.
      *

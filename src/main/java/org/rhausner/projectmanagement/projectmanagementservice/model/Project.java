@@ -39,9 +39,9 @@ public class Project {
 
     /**
      * Convenience constructor to create a project instance with its core fields.
-     * The {@code projectStatus} is initialised to {@link ProjectStatus#PLANNED} by default.
+     * The {@code projectStatus} is initialized to {@link ProjectStatus#PLANNED} by default.
      *
-     * @param id          the project id (may be {@code null} for new entities)
+     * @param id          the project id (can be {@code null} for new entities)
      * @param name        the project name
      * @param description the project description
      * @param startDate   the planned start date

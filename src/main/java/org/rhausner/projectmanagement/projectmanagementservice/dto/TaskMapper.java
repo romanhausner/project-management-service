@@ -6,13 +6,9 @@ import org.rhausner.projectmanagement.projectmanagementservice.model.TaskPriorit
 import org.rhausner.projectmanagement.projectmanagementservice.model.TaskStatus;
 import org.springframework.stereotype.Component;
 
-import java.time.Instant;
-import java.util.Objects;
-
 /**
  * Mapper component that converts between domain {@link Task} entities
  * and the corresponding DTO representations used by the API.
- * <p>
  * Implemented as a Spring {@code @Component} so it can be injected into controllers.
  * Mapping is manual and intentionally straightforward to keep control
  * over default values and null handling.

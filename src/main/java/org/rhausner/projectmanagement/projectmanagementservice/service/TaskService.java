@@ -14,7 +14,6 @@ import java.util.List;
 
 /**
  * Service layer that encapsulates business logic and persistence operations for Tasks.
- *
  * This class mediates between controllers and the {@link TaskRepository}, providing
  * methods for common CRUD operations and patch/update logic. Transactional annotations
  * are applied where operations modify the entity state.
@@ -55,7 +54,6 @@ public class TaskService {
 
     /**
      * Create and persist a new task entity.
-     *
      * The provided entity is saved through the repository and the managed instance
      * with generated identifiers is returned.
      *
@@ -70,7 +68,6 @@ public class TaskService {
 
     /**
      * Update an existing task with new values (full replace semantics).
-     *
      * This method runs in a transactional context and updates the managed entity
      * with the values from the provided {@code update} object. The returned instance
      * is the managed entity.
@@ -111,7 +108,6 @@ public class TaskService {
 
     /**
      * Apply a partial update (PATCH semantics) to an existing task.
-     *
      * The {@link TaskPatchCommand} encodes presence/absence semantics for individual
      * fields; this method applies those changes inside a transaction. Validation errors
      * result in a {@link BadRequestException}.
@@ -128,7 +124,7 @@ public class TaskService {
 
         if(cmd.isProjectIdPresent()) {
             cmd.getProjectId().ifPresent(projectId -> {
-                if (projectId != task.getProject().getId()) {
+                if (!projectId.equals(task.getProject().getId())) {
                     throw new ImmutableFieldException("Project ID");
                 }
             });

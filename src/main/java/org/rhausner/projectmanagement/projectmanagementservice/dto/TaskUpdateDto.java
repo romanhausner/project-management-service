@@ -21,9 +21,15 @@ public class TaskUpdateDto {
     private LocalDate dueDate;
     private String assignee;
 
+    /**
+     * No-args constructor required by Jackson and other frameworks.
+     */
     public TaskUpdateDto() {
     }
 
+    /**
+     * All-args constructor for convenient manual instantiation in tests or internal code.
+     */
     public TaskUpdateDto(String title, String description, TaskStatus status, TaskPriority priority, LocalDate dueDate, String assignee) {
         this.title = title;
         this.description = description;

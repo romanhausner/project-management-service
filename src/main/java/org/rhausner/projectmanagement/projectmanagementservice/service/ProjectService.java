@@ -12,7 +12,6 @@ import java.util.List;
 
 /**
  * Service layer that encapsulates business logic and persistence operations for Projects.
- *
  * This class mediates between controllers and the {@link ProjectRepository}, providing
  * methods for common CRUD operations and patch/update logic. Transactional annotations
  * are applied where operations modify the entity state.
@@ -42,7 +41,6 @@ public class ProjectService {
 
     /**
      * Create and persist a new project entity.
-     *
      * The provided entity is saved through the repository and the managed instance
      * with generated identifiers is returned.
      *
@@ -67,7 +65,6 @@ public class ProjectService {
 
     /**
      * Update an existing project with new values (full replace semantics).
-     *
      * This method runs in a transactional context and updates the managed entity
      * with the values from the provided {@code update} object. The returned instance
      * is the managed entity (no explicit save required due to transactional write-through).
@@ -100,7 +97,6 @@ public class ProjectService {
 
     /**
      * Apply a partial update (PATCH semantics) to an existing project.
-     *
      * The {@link ProjectPatchCommand} encodes presence/absence semantics for individual
      * fields; this method applies those changes inside a transaction. Validation errors
      * (e.g. blank name) result in a {@link BadRequestException}.

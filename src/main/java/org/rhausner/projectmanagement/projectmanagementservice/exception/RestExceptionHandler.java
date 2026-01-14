@@ -13,7 +13,7 @@ import java.util.stream.Collectors;
 
 /**
  * Global exception handler for REST controllers.
- *
+ * <p>
  * Converts application exceptions into appropriate HTTP responses with a consistent
  * JSON error structure where applicable. This class is registered via Spring's
  * {@code @ControllerAdvice} and provides handlers for common error cases.
@@ -23,7 +23,7 @@ public class RestExceptionHandler {
 
     /**
      * Handle cases where a requested project was not found.
-     *
+     * <p>
      * Returns HTTP 404 (Not Found) with a simple textual message in the response body.
      *
      * @param ex the thrown ProjectNotFoundException
@@ -38,7 +38,7 @@ public class RestExceptionHandler {
 
     /**
      * Handle validation errors triggered by {@code @Valid} annotated request bodies.
-     *
+     * <p>
      * Returns HTTP 400 (Bad Request) and a JSON object containing a map of field names
      * to validation error messages for easier client-side handling.
      *
@@ -59,7 +59,7 @@ public class RestExceptionHandler {
 
     /**
      * Handle application-level bad request scenarios represented by {@link BadRequestException}.
-     *
+     * <p>
      * Returns HTTP 400 (Bad Request) with a JSON object containing a status and an error message.
      *
      * @param ex the BadRequestException thrown by the application
@@ -75,7 +75,6 @@ public class RestExceptionHandler {
 
     /**
      * Handle situations where a task state transition is invalid.
-     *
      * This handler captures {@link InvalidTaskStateException} raised by domain logic
      * (for example attempting to start a task that is already completed) and
      * returns HTTP 400 (Bad Request) with a brief error message.
@@ -93,7 +92,6 @@ public class RestExceptionHandler {
 
     /**
      * Handle cases where a requested task was not found.
-     *
      * Returns HTTP 404 (Not Found) with the exception message in the response body.
      *
      * @param ex the TaskNotFoundException thrown when a task is missing
@@ -108,7 +106,6 @@ public class RestExceptionHandler {
 
     /**
      * Handle attempts to modify immutable fields on domain entities.
-     *
      * When the application detects a client attempt to change an immutable field
      * (e.g. changing the associated project id of an existing task), an
      * {@link ImmutableFieldException} is thrown and mapped to HTTP 400 (Bad Request).
@@ -126,10 +123,8 @@ public class RestExceptionHandler {
 
     /**
      * Fallback handler for all uncaught exceptions.
-     *
      * Returns HTTP 500 (Internal Server Error) with a JSON object containing the status
-     * and the exception message. In production you might want to hide internal messages
-     * and return a more generic error description.
+     * and the exception message.
      *
      * @param ex the uncaught exception
      * @return a ResponseEntity with 500 status and a structured error body
