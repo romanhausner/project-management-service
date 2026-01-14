@@ -31,7 +31,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Integration tests for the Project Management Service application.
- *
+ * <p>
  * This test class verifies:
  * <ul>
  *   <li>Spring application context loads correctly</li>

@@ -15,8 +15,8 @@ import org.rhausner.projectmanagement.projectmanagementservice.model.TaskStatus;
 import org.rhausner.projectmanagement.projectmanagementservice.service.TaskService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
-import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.time.Instant;
@@ -45,10 +45,10 @@ class TaskControllerTest {
     @Autowired
     private ObjectMapper objectMapper;
 
-    @MockitoBean
+    @MockBean
     private TaskService taskService;
 
-    @MockitoBean
+    @MockBean
     private TaskMapper taskMapper;
 
     @Test
