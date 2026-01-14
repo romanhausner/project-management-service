@@ -1,5 +1,10 @@
 package org.rhausner.projectmanagement.projectmanagementservice.dto;
 
+import jakarta.validation.ConstraintViolation;
+import jakarta.validation.Validation;
+import jakarta.validation.Validator;
+import jakarta.validation.ValidatorFactory;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.rhausner.projectmanagement.projectmanagementservice.model.Project;
@@ -9,17 +14,26 @@ import org.rhausner.projectmanagement.projectmanagementservice.model.TaskPriorit
 import org.rhausner.projectmanagement.projectmanagementservice.model.TaskStatus;
 
 import java.time.LocalDate;
+import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Pure unit tests for ProjectMapper and TaskMapper.
  * These tests do not require a Spring context and test the mapper logic in isolation.
+ * Also includes DTO validation tests using Jakarta Validation API.
  */
 class ProjectAndTaskMapperTest {
 
     private ProjectMapper projectMapper;
     private TaskMapper taskMapper;
+    private static Validator validator;
+
+    @BeforeAll
+    static void setUpValidator() {
+        ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
+        validator = factory.getValidator();
+    }
 
     @BeforeEach
     void setUp() {
@@ -251,5 +265,155 @@ class ProjectAndTaskMapperTest {
     void taskMapper_fromUpdateDto_nullInput() {
         assertNull(taskMapper.fromUpdateDto(null));
     }
-}
 
+    // ==================== ProjectCreateDto Validation Tests ====================
+
+    /**
+     * Test that ProjectCreateDto with valid data has no validation errors.
+     */
+    @Test
+    void projectCreateDto_validData_noErrors() {
+        var dto = new ProjectCreateDto(
+                "Valid Name", "Description", LocalDate.of(2026, 1, 1), LocalDate.of(2026, 12, 31), ProjectStatus.PLANNED
+        );
+
+        Set<ConstraintViolation<ProjectCreateDto>> violations = validator.validate(dto);
+
+        assertTrue(violations.isEmpty(), "Valid DTO should have no violations");
+    }
+
+    /**
+     * Test that ProjectCreateDto with blank name fails validation.
+     */
+    @Test
+    void projectCreateDto_blankName_hasError() {
+        var dto = new ProjectCreateDto(
+                "", "Description", LocalDate.of(2026, 1, 1), null, ProjectStatus.PLANNED
+        );
+
+        Set<ConstraintViolation<ProjectCreateDto>> violations = validator.validate(dto);
+
+        assertFalse(violations.isEmpty(), "Blank name should cause validation error");
+        assertTrue(violations.stream().anyMatch(v -> v.getPropertyPath().toString().equals("name")));
+    }
+
+    /**
+     * Test that ProjectCreateDto with null name fails validation.
+     */
+    @Test
+    void projectCreateDto_nullName_hasError() {
+        var dto = new ProjectCreateDto(
+                null, "Description", LocalDate.of(2026, 1, 1), null, ProjectStatus.PLANNED
+        );
+
+        Set<ConstraintViolation<ProjectCreateDto>> violations = validator.validate(dto);
+
+        assertFalse(violations.isEmpty(), "Null name should cause validation error");
+        assertTrue(violations.stream().anyMatch(v -> v.getPropertyPath().toString().equals("name")));
+    }
+
+    /**
+     * Test that ProjectCreateDto with null startDate fails validation.
+     */
+    @Test
+    void projectCreateDto_nullStartDate_hasError() {
+        var dto = new ProjectCreateDto(
+                "Name", "Description", null, null, ProjectStatus.PLANNED
+        );
+
+        Set<ConstraintViolation<ProjectCreateDto>> violations = validator.validate(dto);
+
+        assertFalse(violations.isEmpty(), "Null startDate should cause validation error");
+        assertTrue(violations.stream().anyMatch(v -> v.getPropertyPath().toString().equals("startDate")));
+    }
+
+    /**
+     * Test that ProjectCreateDto with null projectStatus fails validation.
+     */
+    @Test
+    void projectCreateDto_nullProjectStatus_hasError() {
+        var dto = new ProjectCreateDto(
+                "Name", "Description", LocalDate.of(2026, 1, 1), null, null
+        );
+
+        Set<ConstraintViolation<ProjectCreateDto>> violations = validator.validate(dto);
+
+        assertFalse(violations.isEmpty(), "Null projectStatus should cause validation error");
+        assertTrue(violations.stream().anyMatch(v -> v.getPropertyPath().toString().equals("projectStatus")));
+    }
+
+    // ==================== TaskCreateDto Validation Tests ====================
+
+    /**
+     * Test that TaskCreateDto with valid data has no validation errors.
+     */
+    @Test
+    void taskCreateDto_validData_noErrors() {
+        var dto = new TaskCreateDto(
+                1, "Valid Title", "Description", TaskStatus.TODO, TaskPriority.MEDIUM, LocalDate.of(2026, 6, 1), "john"
+        );
+
+        Set<ConstraintViolation<TaskCreateDto>> violations = validator.validate(dto);
+
+        assertTrue(violations.isEmpty(), "Valid DTO should have no violations");
+    }
+
+    /**
+     * Test that TaskCreateDto with null projectId fails validation.
+     */
+    @Test
+    void taskCreateDto_nullProjectId_hasError() {
+        var dto = new TaskCreateDto(
+                null, "Title", "Description", TaskStatus.TODO, TaskPriority.MEDIUM, null, null
+        );
+
+        Set<ConstraintViolation<TaskCreateDto>> violations = validator.validate(dto);
+
+        assertFalse(violations.isEmpty(), "Null projectId should cause validation error");
+        assertTrue(violations.stream().anyMatch(v -> v.getPropertyPath().toString().equals("projectId")));
+    }
+
+    /**
+     * Test that TaskCreateDto with blank title fails validation.
+     */
+    @Test
+    void taskCreateDto_blankTitle_hasError() {
+        var dto = new TaskCreateDto(
+                1, "", "Description", TaskStatus.TODO, TaskPriority.MEDIUM, null, null
+        );
+
+        Set<ConstraintViolation<TaskCreateDto>> violations = validator.validate(dto);
+
+        assertFalse(violations.isEmpty(), "Blank title should cause validation error");
+        assertTrue(violations.stream().anyMatch(v -> v.getPropertyPath().toString().equals("title")));
+    }
+
+    /**
+     * Test that TaskCreateDto with null title fails validation.
+     */
+    @Test
+    void taskCreateDto_nullTitle_hasError() {
+        var dto = new TaskCreateDto(
+                1, null, "Description", TaskStatus.TODO, TaskPriority.MEDIUM, null, null
+        );
+
+        Set<ConstraintViolation<TaskCreateDto>> violations = validator.validate(dto);
+
+        assertFalse(violations.isEmpty(), "Null title should cause validation error");
+        assertTrue(violations.stream().anyMatch(v -> v.getPropertyPath().toString().equals("title")));
+    }
+
+    /**
+     * Test that TaskCreateDto allows null for optional fields (description, priority, dueDate, assignee).
+     */
+    @Test
+    void taskCreateDto_nullOptionalFields_noErrors() {
+        var dto = new TaskCreateDto(
+                1, "Title", null, TaskStatus.TODO, null, null, null
+        );
+
+        Set<ConstraintViolation<TaskCreateDto>> violations = validator.validate(dto);
+
+        assertTrue(violations.isEmpty(), "Null optional fields should not cause validation errors");
+    }
+}
