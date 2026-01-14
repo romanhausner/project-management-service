@@ -3,6 +3,8 @@ package org.rhausner.projectmanagement.projectmanagementservice.model;
 import jakarta.persistence.*;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 /**
@@ -26,6 +28,8 @@ public class Project {
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private ProjectStatus projectStatus;
+    @OneToMany(mappedBy = "project", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Task> tasks = new ArrayList<>();
 
     /**
      * No-args constructor required by JPA.
@@ -138,5 +142,46 @@ public class Project {
     @Override
     public int hashCode() {
         return Objects.hash(id, name, description, startDate, endDate);
+    }
+
+    // Domain logic methods
+
+    /**
+     * Add a task to this project.
+     *
+     * This method ensures bidirectional consistency: it adds the task to this
+     * project's task list and sets the task's project reference to this instance.
+     * If the task already belongs to a different project, an {@link IllegalStateException}
+     * is thrown to prevent accidental reassignment.
+     *
+     * @param task the task to add (must not be null)
+     * @throws NullPointerException if task is null
+     * @throws IllegalStateException if the task already belongs to another project
+     */
+    public void addTask(Task task) {
+        Objects.requireNonNull(task, "task must not be null");
+
+        if (task.getProject() != null && task.getProject() != this) {
+            throw new IllegalStateException(
+                    "Task already belongs to another project (id=" +
+                            task.getProject().getId() + ")"
+            );
+        }
+
+        tasks.add(task);
+        task.setProject(this);
+    }
+
+    /**
+     * Remove a task from this project.
+     *
+     * This method ensures bidirectional consistency: it removes the task from this
+     * project's task list and clears the task's project reference.
+     *
+     * @param task the task to remove
+     */
+    public void removeTask(Task task) {
+        tasks.remove(task);
+        task.setProject(null);
     }
 }

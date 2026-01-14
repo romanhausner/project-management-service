@@ -1,6 +1,8 @@
 package org.rhausner.projectmanagement.projectmanagementservice.model;
 
 import jakarta.persistence.*;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 import org.rhausner.projectmanagement.projectmanagementservice.exception.InvalidTaskStateException;
 
 import java.time.Instant;

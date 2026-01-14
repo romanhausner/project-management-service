@@ -4,6 +4,7 @@ import org.rhausner.projectmanagement.projectmanagementservice.exception.BadRequ
 import org.rhausner.projectmanagement.projectmanagementservice.exception.ImmutableFieldException;
 import org.rhausner.projectmanagement.projectmanagementservice.exception.TaskNotFoundException;
 import org.rhausner.projectmanagement.projectmanagementservice.dto.command.TaskPatchCommand;
+import org.rhausner.projectmanagement.projectmanagementservice.model.Project;
 import org.rhausner.projectmanagement.projectmanagementservice.model.Task;
 import org.rhausner.projectmanagement.projectmanagementservice.repository.TaskRepository;
 import org.springframework.stereotype.Service;
@@ -62,6 +63,8 @@ public class TaskService {
      * @return the saved {@link Task} with any generated fields populated
      */
     public Task createTask(Task task) {
+        Project project = task.getProject();
+        project.addTask(task);
         return taskRepository.save(task);
     }
 
@@ -94,8 +97,15 @@ public class TaskService {
      * Delete a task by id.
      *
      * @param id the id of the task to delete
+     * @throws TaskNotFoundException if no task with the given id exists
      */
+    @Transactional
     public void deleteTaskById(Integer id) {
+        Task task = getTaskById(id); // Ensure existence
+        Project project = task.getProject();
+        if (project != null) {
+            project.removeTask(task);
+        }
         taskRepository.deleteById(id);
     }
 

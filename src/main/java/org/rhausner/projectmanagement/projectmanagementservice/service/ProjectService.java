@@ -94,6 +94,7 @@ public class ProjectService {
      * @param id the id of the project to delete
      */
     public void deleteProjectById(Integer id) {
+        getProjectById(id); // ensure existence
         projectRepository.deleteById(id);
     }
 

@@ -1,10 +1,16 @@
 package org.rhausner.projectmanagement.projectmanagementservice;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import jakarta.persistence.EntityManager;
 import org.junit.jupiter.api.Test;
 import org.rhausner.projectmanagement.projectmanagementservice.controller.ProjectController;
 import org.rhausner.projectmanagement.projectmanagementservice.controller.TaskController;
 import org.rhausner.projectmanagement.projectmanagementservice.dto.ProjectMapper;
 import org.rhausner.projectmanagement.projectmanagementservice.dto.TaskMapper;
+import org.rhausner.projectmanagement.projectmanagementservice.dto.command.TaskPatchCommand;
+import org.rhausner.projectmanagement.projectmanagementservice.exception.ImmutableFieldException;
+import org.rhausner.projectmanagement.projectmanagementservice.exception.InvalidTaskStateException;
+import org.rhausner.projectmanagement.projectmanagementservice.exception.TaskNotFoundException;
 import org.rhausner.projectmanagement.projectmanagementservice.model.Project;
 import org.rhausner.projectmanagement.projectmanagementservice.model.ProjectStatus;
 import org.rhausner.projectmanagement.projectmanagementservice.model.Task;
@@ -62,6 +68,9 @@ class ProjectManagementServiceApplicationTests {
 
     @Autowired
     private TaskMapper taskMapper;
+
+    @Autowired
+    private EntityManager entityManager;
 
     /**
      * Verify that the Spring application context loads without errors.
@@ -205,6 +214,24 @@ class ProjectManagementServiceApplicationTests {
         assertFalse(projectRepository.findById(id).isPresent(), "Project should be deleted");
     }
 
+    /**
+     * Test that deleting a non-existent project throws ProjectNotFoundException.
+     */
+    @Test
+    void deleteNonExistentProject_throwsProjectNotFoundException() {
+        Integer nonExistentId = 99999;
+
+        // Verify the project does not exist
+        assertFalse(projectRepository.findById(nonExistentId).isPresent());
+
+        // Attempt to delete non-existent project should throw ProjectNotFoundException
+        assertThrows(
+                org.rhausner.projectmanagement.projectmanagementservice.exception.ProjectNotFoundException.class,
+                () -> projectService.deleteProjectById(nonExistentId),
+                "Deleting non-existent project should throw ProjectNotFoundException"
+        );
+    }
+
     // ==================== Task CRUD Tests ====================
 
     /**
@@ -220,7 +247,7 @@ class ProjectManagementServiceApplicationTests {
         project = projectRepository.save(project);
 
         Task task = new Task();
-        task.setProject(project);
+        project.addTask(task);
         task.setTitle("Test Task");
         task.setDescription("Task Description");
         task.setStatus(TaskStatus.TODO);
@@ -253,7 +280,7 @@ class ProjectManagementServiceApplicationTests {
         project = projectRepository.save(project);
 
         Task task = new Task();
-        task.setProject(project);
+        project.addTask(task);
         task.setTitle("Original Title");
         task.setStatus(TaskStatus.TODO);
         task.setPriority(TaskPriority.LOW);
@@ -286,7 +313,7 @@ class ProjectManagementServiceApplicationTests {
         project = projectRepository.save(project);
 
         Task task = new Task();
-        task.setProject(project);
+        project.addTask(task);
         task.setTitle("To Delete");
         task.setStatus(TaskStatus.TODO);
 
@@ -298,5 +325,206 @@ class ProjectManagementServiceApplicationTests {
         taskRepository.deleteById(id);
 
         assertFalse(taskRepository.findById(id).isPresent(), "Task should be deleted");
+    }
+
+    /**
+     * Test that changing the project ID of an existing task throws ImmutableFieldException.
+     */
+    @Test
+    void changeTaskProjectId_throwsImmutableFieldException() {
+        // Create two projects
+        Project project1 = new Project();
+        project1.setName("Project 1");
+        project1.setStartDate(LocalDate.of(2026, 1, 1));
+        project1.setProjectStatus(ProjectStatus.PLANNED);
+        project1 = projectRepository.save(project1);
+
+        Project project2 = new Project();
+        project2.setName("Project 2");
+        project2.setStartDate(LocalDate.of(2026, 2, 1));
+        project2.setProjectStatus(ProjectStatus.PLANNED);
+        project2 = projectRepository.save(project2);
+
+        // Create a task for project1
+        Task task = new Task();
+        project1.addTask(task);
+        task.setTitle("Task for Project 1");
+        task.setStatus(TaskStatus.TODO);
+        Task saved = taskRepository.save(task);
+
+        // Attempt to change project via patch should throw ImmutableFieldException
+        var patchCommand = TaskPatchCommand.from(
+                new ObjectMapper().createObjectNode().put("projectId", project2.getId())
+        );
+
+        assertThrows(
+                ImmutableFieldException.class,
+                () -> taskService.patchTask(saved.getId(), patchCommand),
+                "Changing project ID should throw ImmutableFieldException"
+        );
+    }
+
+    /**
+     * Test that changing the status of a DONE task to IN_PROGRESS throws InvalidTaskStateException.
+     */
+    @Test
+    void changeTaskStatusFromDoneToInProgress_throwsInvalidTaskStateException() {
+        // Create a project
+        Project project = new Project();
+        project.setName("Test Project");
+        project.setStartDate(LocalDate.of(2026, 1, 1));
+        project.setProjectStatus(ProjectStatus.PLANNED);
+        project = projectRepository.save(project);
+
+        // Create a task and mark it as done
+        Task task = new Task();
+        project.addTask(task);
+        task.setTitle("Completed Task");
+        task.setStatus(TaskStatus.DONE);
+        Task saved = taskRepository.save(task);
+
+        // Attempt to change status from DONE to IN_PROGRESS via patch should throw InvalidTaskStateException
+        var patchCommand = TaskPatchCommand.from(
+                new ObjectMapper().createObjectNode().put("status", "IN_PROGRESS")
+        );
+
+        assertThrows(
+                InvalidTaskStateException.class,
+                () -> taskService.patchTask(saved.getId(), patchCommand),
+                "Changing status from DONE to IN_PROGRESS should throw InvalidTaskStateException"
+        );
+    }
+
+    /**
+     * Test that setting a DONE task to DONE again is idempotent (no exception thrown).
+     */
+    @Test
+    void setDoneTaskToDoneAgain_isIdempotent() {
+        // Create a project
+        Project project = new Project();
+        project.setName("Test Project");
+        project.setStartDate(LocalDate.of(2026, 1, 1));
+        project.setProjectStatus(ProjectStatus.PLANNED);
+        project = projectRepository.save(project);
+
+        // Create a task and mark it as done
+        Task task = new Task();
+        project.addTask(task);
+        task.setTitle("Completed Task");
+        task.setStatus(TaskStatus.DONE);
+        Task saved = taskRepository.save(task);
+
+        // Attempt to set status to DONE again should succeed (idempotent)
+        var patchCommand = org.rhausner.projectmanagement.projectmanagementservice.dto.command.TaskPatchCommand.from(
+                new com.fasterxml.jackson.databind.ObjectMapper().createObjectNode().put("status", "DONE")
+        );
+
+        // Should not throw any exception
+        Task patched = taskService.patchTask(saved.getId(), patchCommand);
+
+        assertEquals(TaskStatus.DONE, patched.getStatus(), "Status should remain DONE");
+    }
+
+    /**
+     * Test that deleting a non-existent task throws TaskNotFoundException.
+     */
+    @Test
+    void deleteNonExistentTask_throwsTaskNotFoundException() {
+        Integer nonExistentId = 99999;
+
+        // Verify the task does not exist
+        assertFalse(taskRepository.findById(nonExistentId).isPresent());
+
+        // Attempt to delete non-existent task should throw TaskNotFoundException
+        assertThrows(
+                TaskNotFoundException.class,
+                () -> taskService.deleteTaskById(nonExistentId),
+                "Deleting non-existent task should throw TaskNotFoundException"
+        );
+    }
+
+    /**
+     * Test that deleting a project with existing tasks cascades the delete (or fails depending on configuration).
+     */
+    @Test
+    void deleteProjectWithTasks_cascadesDelete() {
+        // Create a project
+        Project project = new Project();
+        project.setName("Project with Tasks");
+        project.setStartDate(LocalDate.of(2026, 1, 1));
+        project.setProjectStatus(ProjectStatus.PLANNED);
+        project = projectRepository.save(project);
+        Integer projectId = project.getId();
+
+        // Create tasks for the project
+        Task task1 = new Task();
+        project.addTask(task1);
+        task1.setTitle("Task 1");
+        task1.setStatus(TaskStatus.TODO);
+        task1 = taskRepository.save(task1);
+        Integer task1Id = task1.getId();
+
+        Task task2 = new Task();
+        project.addTask(task2);
+        task2.setTitle("Task 2");
+        task2.setStatus(TaskStatus.IN_PROGRESS);
+        task2 = taskRepository.save(task2);
+        Integer task2Id = task2.getId();
+
+        // Verify project and tasks exist
+        assertTrue(projectRepository.findById(projectId).isPresent());
+        assertTrue(taskRepository.findById(task1Id).isPresent());
+        assertTrue(taskRepository.findById(task2Id).isPresent());
+
+        // Delete the project
+        projectService.deleteProjectById(projectId);
+
+        entityManager.flush();
+        entityManager.clear();
+
+        // Verify project is deleted
+        assertFalse(projectRepository.findById(projectId).isPresent(), "Project should be deleted");
+
+        // Verify tasks are also deleted (cascading delete)
+        assertFalse(taskRepository.findById(task1Id).isPresent(), "Task 1 should be deleted with project");
+        assertFalse(taskRepository.findById(task2Id).isPresent(), "Task 2 should be deleted with project");
+    }
+
+    /**
+     * Test that a task cannot be moved to a different project.
+     */
+    @Test
+    void addTaskToAnotherProject_throwsException() {
+        // Create two projects
+        Project project1 = new Project();
+        project1.setName("Project 1");
+        project1.setStartDate(LocalDate.of(2026, 1, 1));
+        project1.setProjectStatus(ProjectStatus.PLANNED);
+        project1 = projectRepository.save(project1);
+
+        Project project2 = new Project();
+        project2.setName("Project 2");
+        project2.setStartDate(LocalDate.of(2026, 2, 1));
+        project2.setProjectStatus(ProjectStatus.PLANNED);
+        project2 = projectRepository.save(project2);
+
+        // Create a task for project1
+        Task task = new Task();
+        project1.addTask(task);
+        task.setTitle("Task for Project 1");
+        task.setStatus(TaskStatus.TODO);
+        Task savedTask = taskRepository.save(task);
+
+        // Verify task is assigned to project1
+        assertEquals(project1.getId(), savedTask.getProject().getId());
+
+        // Attempt to add the same task to project2 should throw an exception
+        Project finalProject2 = project2;
+        Task finalTask = savedTask;
+        assertThrows(
+                IllegalStateException.class,
+                () -> finalProject2.addTask(finalTask),
+                "Adding a task that already belongs to another project should throw IllegalStateException"
+        );
     }
 }
