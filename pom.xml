@@ -15,7 +15,11 @@
     <description>project management service</description>
     <url>https://github.com/romanhausner/project-management-service</url>
     <licenses>
-        <license/>
+        <license>
+            <name>MIT License</name>
+            <url>https://opensource.org/licenses/MIT</url>
+            <distribution>repo</distribution>
+        </license>
     </licenses>
     <developers>
         <developer>

@@ -145,3 +145,7 @@ Base URL:
 ```text
 http://localhost:8080/api/v1
 ```
+
+## License
+
+This project is licensed under the MIT License.
