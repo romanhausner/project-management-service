@@ -114,10 +114,10 @@ Create a `.env` file:
 POSTGRES_USER=postgres
 POSTGRES_PASSWORD=secret
 POSTGRES_DB=project_management
-POSTGRES_PORT=5342
+POSTGRES_PORT=5432
 ```
 
-Start PostgreSQL:
+Start PostgreSQL via Docker Compose:
 
 ```bash
 docker-compose up -d
@@ -130,7 +130,7 @@ docker-compose up -d
 Set the environment variables before starting the application, for example via your IDE run configuration:
 
 ```env
-DB_URL=jdbc:postgresql://localhost:5342/postgres
+DB_URL=jdbc:postgresql://localhost:5432/postgres
 DB_USER=postgres
 DB_PASSWORD=secret
 ```
