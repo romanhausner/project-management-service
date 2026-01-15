@@ -101,6 +101,7 @@ DTO / Mapper→ API contracts & mapping
 - Controller tests using `@WebMvcTest` and `MockMvc`
 - Integration tests using `@SpringBootTest` with real repositories
 - Mapper logic covered by unit tests
+- End to end tests using RANDOM_PORT / TestRestTemplate an H2
 
 ---
 
