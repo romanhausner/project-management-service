@@ -22,6 +22,7 @@ import org.rhausner.projectmanagement.projectmanagementservice.service.ProjectSe
 import org.rhausner.projectmanagement.projectmanagementservice.service.TaskService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
@@ -42,6 +43,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * Tests are transactional and will be rolled back after each test method.
  */
 @SpringBootTest
+@ActiveProfiles("integration")
 @Transactional
 class ProjectManagementServiceApplicationTests {
 
