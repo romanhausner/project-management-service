@@ -9,11 +9,12 @@ A backend-focused **Spring Boot REST API** for managing projects and tasks, desi
 - Java 21
 - Spring Boot 3.3.7
 - Spring Web (REST), Spring Data JPA
+- OpenAPI 3 / Swagger UI
 - PostgreSQL
 - Jackson
 - Maven
 - Docker / Docker Compose
-- JUnit 5, Mockito, MockMvc
+- JUnit 5, Mockito, MockMvc, H2 (in-memory, end-to-end tests), JaCoCo
 
 ---
 
