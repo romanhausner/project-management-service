@@ -21,7 +21,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * REST controller for managing tasks in the Project Management Service.
@@ -51,7 +50,7 @@ public class TaskController {
     public List<TaskGetDto> getTasks() {
         return taskService.getAllTasks().stream()
                 .map(taskMapper::toGetDto)
-                .collect(Collectors.toList());
+                .toList();
     }
 
     /**

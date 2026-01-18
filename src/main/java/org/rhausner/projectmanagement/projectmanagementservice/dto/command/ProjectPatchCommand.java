@@ -11,12 +11,12 @@ import java.util.Optional;
 
 /**
  * Command object for PATCH-style updates to a Project.
- *
+ * <p>
  * This class represents a partial update (patch). Fields are modelled as Optionals
  * to explicitly express presence/absence of values from the incoming JSON. For fields
  * where a difference between "field missing" and "field explicitly set to null" is
  * important, an additional "present" flag is used (e.g. descriptionPresent / endDatePresent).
- *
+ * <p>
  * The static `from(JsonNode)` factory parses a JSON node and performs basic validation
  * (e.g. non-null for required properties when present, ISO date parsing). It throws
  * BadRequestException for invalid input.
@@ -34,7 +34,7 @@ public class ProjectPatchCommand {
 
     /**
      * Parse a JsonNode into a ProjectPatchCommand.
-     *
+     * <p>
      * Important behavior notes:
      * - If a field is missing, the corresponding Optional remains empty and consumer should not change that property.
      * - If a field is present with JSON null, the semantics differ per-field: description and endDate use presence flags

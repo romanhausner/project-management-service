@@ -18,7 +18,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * REST controller for managing projects.
@@ -48,7 +47,7 @@ public class ProjectController {
     public List<ProjectGetDto> getProjects() {
         return projectService.getAllProjects().stream()
                 .map(projectMapper::toGetDto)
-                .collect(Collectors.toList());
+                .toList();
     }
 
     /**
