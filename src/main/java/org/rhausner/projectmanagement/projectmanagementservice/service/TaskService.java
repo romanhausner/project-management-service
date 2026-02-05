@@ -122,7 +122,7 @@ public class TaskService {
     public Task patchTask(Long id, TaskPatchCommand cmd) {
         Task task = getTaskById(id);
 
-        if(cmd.isProjectIdPresent()) {
+        if(cmd.getProjectId() != null) {
             cmd.getProjectId().ifPresent(projectId -> {
                 if (!projectId.equals(task.getProject().getId())) {
                     throw new ImmutableFieldException("Project ID");
@@ -130,7 +130,7 @@ public class TaskService {
             });
         }
 
-        if(cmd.isIdPresent()) {
+        if(cmd.getId() != null) {
             cmd.getId().ifPresent(taskId -> {
                 if (!taskId.equals(task.getId())) {
                     throw new ImmutableFieldException("ID");
@@ -138,29 +138,34 @@ public class TaskService {
             });
         }
 
-        cmd.getTitle().ifPresent(title -> {
-            if (title.isBlank()) {
-                throw new BadRequestException("title must not be blank");
-            }
-            task.setTitle(title);
-        });
+        if(cmd.getTitle() != null) {
+            cmd.getTitle().ifPresent(title -> {
+                if (title.isBlank()) {
+                    throw new BadRequestException("title must not be blank");
+                }
+                task.setTitle(title);
+            });
+        }
 
-        if (cmd.isDescriptionPresent()) {
+        if (cmd.getDescription() != null) {
             cmd.getDescription().ifPresentOrElse(task::setDescription, task::clearDescription);
         }
 
-        if (cmd.isDueDatePresent()) {
+        if (cmd.getDueDate() != null) {
             cmd.getDueDate().ifPresentOrElse(task::setDueDate, task::clearDueDate);
         }
 
-        if (cmd.isAssigneePresent()) {
+        if (cmd.getAssignee() != null) {
             cmd.getAssignee().ifPresentOrElse(task::setAssignee, task::clearAssignee);
         }
 
         // Use domain methods for state transitions when status is provided
-        cmd.getStatus().ifPresent(task::changeStatus);
-
-        cmd.getPriority().ifPresent(task::setPriority);
+        if(cmd.getStatus() != null) {
+            cmd.getStatus().ifPresent(task::changeStatus);
+        }
+        if (cmd.getPriority() != null) {
+            cmd.getPriority().ifPresent(task::setPriority);
+        }
 
         return task;
     }

@@ -24,13 +24,11 @@ import java.util.Optional;
 @SuppressWarnings("OptionalUsedAsField") // intentionally allow Optionals as fields for patch semantics
 public class ProjectPatchCommand {
 
-    private Optional<String> name = Optional.empty();
-    private Optional<String> description = Optional.empty();
-    private boolean descriptionPresent = false;
-    private Optional<LocalDate> startDate = Optional.empty();
-    private Optional<LocalDate> endDate = Optional.empty();
-    private boolean endDatePresent = false;
-    private Optional<ProjectStatus> projectStatus = Optional.empty();
+    private Optional<String> name;
+    private Optional<String> description;
+    private Optional<LocalDate> startDate;
+    private Optional<LocalDate> endDate;
+    private Optional<ProjectStatus> projectStatus;
 
     /**
      * Parse a JsonNode into a ProjectPatchCommand.
@@ -55,7 +53,6 @@ public class ProjectPatchCommand {
         // DESCRIPTION: support explicit clearing via JSON null. Use descriptionPresent to distinguish
         // between "not provided" and "explicitly set to null".
         if (node.has("description")) {
-            cmd.descriptionPresent = true;
             cmd.description = node.get("description").isNull()
                     ? Optional.empty()
                     : Optional.of(node.get("description").asText());
@@ -75,7 +72,6 @@ public class ProjectPatchCommand {
 
         // END DATE: similar to description, we track presence and allow explicit clearing with null
         if (node.has("endDate")) {
-            cmd.endDatePresent = true;
             try {
                 cmd.endDate = node.get("endDate").isNull()
                         ? Optional.empty()
@@ -116,11 +112,4 @@ public class ProjectPatchCommand {
         return this.startDate;
     }
 
-    public boolean isDescriptionPresent() {
-        return descriptionPresent;
-    }
-
-    public boolean isEndDatePresent() {
-        return endDatePresent;
-    }
 }

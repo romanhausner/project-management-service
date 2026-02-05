@@ -21,25 +21,21 @@ import java.util.Optional;
 @SuppressWarnings("OptionalUsedAsField")
 public class TaskPatchCommand {
 
-    private Optional<Integer> projectId;
-    private boolean projectIdPresent = false;
+    private Optional<Long> projectId;
 
-    private Optional<Integer> id;
-    private boolean idPresent = false;
+    private Optional<Long> id;
 
-    private Optional<String> title = Optional.empty();
+    private Optional<String> title;
 
-    private Optional<String> description = Optional.empty();
-    private boolean descriptionPresent = false;
+    private Optional<String> description;
 
-    private Optional<LocalDate> dueDate = Optional.empty();
-    private boolean dueDatePresent = false;
+    private Optional<LocalDate> dueDate;
 
-    private Optional<TaskStatus> status = Optional.empty();
-    private Optional<TaskPriority> priority = Optional.empty();
+    private Optional<TaskStatus> status;
 
-    private Optional<String> assignee = Optional.empty();
-    private boolean assigneePresent = false;
+    private Optional<TaskPriority> priority;
+
+    private Optional<String> assignee;
 
     /**
      * Parse a JsonNode into a TaskPatchCommand.
@@ -57,8 +53,7 @@ public class TaskPatchCommand {
             if (node.get("projectId").isNull()) {
                 throw new BadRequestException("projectId must not be null");
             }
-            cmd.projectIdPresent = true;
-            cmd.projectId = Optional.of(node.get("projectId").asInt());
+            cmd.projectId = Optional.of(node.get("projectId").asLong());
         }
 
         // ID: if provided, must not be JSON null
@@ -66,8 +61,7 @@ public class TaskPatchCommand {
             if (node.get("id").isNull()) {
                 throw new BadRequestException("id must not be null");
             }
-            cmd.idPresent = true;
-            cmd.id = Optional.of(node.get("id").asInt());
+            cmd.id = Optional.of(node.get("id").asLong());
         }
 
         // TITLE: if provided it must not be JSON null
@@ -80,7 +74,6 @@ public class TaskPatchCommand {
 
         // DESCRIPTION: presence flag and allow explicit clearing with null
         if (node.has("description")) {
-            cmd.descriptionPresent = true;
             cmd.description = node.get("description").isNull()
                     ? Optional.empty()
                     : Optional.of(node.get("description").asText());
@@ -88,7 +81,6 @@ public class TaskPatchCommand {
 
         // DUE DATE: presence flag and allow clearing with null; validate ISO date if present and not null
         if (node.has("dueDate")) {
-            cmd.dueDatePresent = true;
             try {
                 cmd.dueDate = node.get("dueDate").isNull()
                         ? Optional.empty()
@@ -114,7 +106,6 @@ public class TaskPatchCommand {
 
         // ASSIGNEE: presence flag and allow explicit clearing
         if (node.has("assignee")) {
-            cmd.assigneePresent = true;
             cmd.assignee = node.get("assignee").isNull()
                     ? Optional.empty()
                     : Optional.of(node.get("assignee").asText());
@@ -123,11 +114,11 @@ public class TaskPatchCommand {
         return cmd;
     }
 
-    public Optional<Integer> getProjectId() {
+    public Optional<Long> getProjectId() {
         return projectId;
     }
 
-    public  Optional<Integer> getId() {
+    public  Optional<Long> getId() {
         return id;
     }
 
@@ -155,24 +146,5 @@ public class TaskPatchCommand {
         return assignee;
     }
 
-    public boolean isDescriptionPresent() {
-        return descriptionPresent;
-    }
-
-    public boolean isDueDatePresent() {
-        return dueDatePresent;
-    }
-
-    public boolean isAssigneePresent() {
-        return assigneePresent;
-    }
-
-    public boolean isIdPresent() {
-        return idPresent;
-    }
-
-    public boolean isProjectIdPresent() {
-        return projectIdPresent;
-    }
 }
 

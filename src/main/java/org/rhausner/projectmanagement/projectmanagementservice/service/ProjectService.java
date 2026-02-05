@@ -110,20 +110,26 @@ public class ProjectService {
     @Transactional
     public Project patchProject(Long id, ProjectPatchCommand cmd) {
         Project project = getProjectById(id);
-        cmd.getName().ifPresent(name -> {
-            if (name.isBlank()) {
-                throw new BadRequestException("name must not be blank");
-            }
-            project.setName(name);
-        });
-        if (cmd.isDescriptionPresent()) {
+        if(cmd.getName() != null) {
+            cmd.getName().ifPresent(name -> {
+                if (name.isBlank()) {
+                    throw new BadRequestException("name must not be blank");
+                }
+                project.setName(name);
+            });
+        }
+        if (cmd.getDescription() != null) {
             cmd.getDescription().ifPresentOrElse(project::setDescription, project::clearDescription);
         }
-        cmd.getStartDate().ifPresent(project::setStartDate);
-        if (cmd.isEndDatePresent()) {
+        if(cmd.getStartDate() != null) {
+            cmd.getStartDate().ifPresent(project::setStartDate);
+        }
+        if (cmd.getEndDate() != null) {
             cmd.getEndDate().ifPresentOrElse(project::setEndDate, project::clearEndDate);
         }
-        cmd.getProjectStatus().ifPresent(project::setProjectStatus);
+        if (cmd.getProjectStatus() != null) {
+            cmd.getProjectStatus().ifPresent(project::setProjectStatus);
+        }
         return project;
     }
 }
